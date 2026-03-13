@@ -1,0 +1,182 @@
+[
+    {
+        "id": 1,
+        "title": "Кобзар",
+        "year": "1840",
+        "cover_url": "https://chytomo.com/wp-content/uploads/2018/09/KOBZAR.jpg",
+        "author": "Тарас Шевченко",
+        "genre": "Поезія",
+        "isFavorite": false
+    },
+    {
+        "id": 2,
+        "title": "Лісова пісня",
+        "year": "1911",
+        "cover_url": "https://atenabooks.com/upload/product/lisova-pisnya/685.jpg",
+        "author": "Леся Українка",
+        "genre": "Драма-феєрія",
+        "isFavorite": false
+    },
+    {
+        "id": 3,
+        "title": "Тіні забутих предків",
+        "year": "1911",
+        "cover_url": "https://libruk.com.ua/wp-content/uploads/tini-zabutykh-predkiv.jpg",
+        "author": "Михайло Коцюбинський",
+        "genre": "Повість",
+        "isFavorite": false
+    },
+    {
+        "id": 4,
+        "title": "Захар Беркут",
+        "year": "1883",
+        "cover_url": "https://st.violity.com/auction/publication/44/89/448921/e043b1b2fae69dd7a431bfa895a337ca.jpg",
+        "author": "Іван Франко",
+        "genre": "Історичний роман",
+        "isFavorite": false
+    },
+    {
+        "id": 5,
+        "title": "Місто",
+        "year": "1928",
+        "cover_url": "https://static.yakaboo.ua/media/cloudflare/product/webp/600x840/i/n/index_10_10.jpg",
+        "author": "Валер'ян Підмогильний",
+        "genre": "Роман",
+        "isFavorite": false
+    },
+    {
+        "id": 6,
+        "title": "Чорна рада",
+        "year": "1857",
+        "cover_url": "https://static.yakaboo.ua/media/cloudflare/product/webp/600x840/i/m/img697_1_6.jpg",
+        "author": "Пантелеймон Куліш",
+        "genre": "Історичний роман",
+        "isFavorite": false
+    },
+    {
+        "id": 7,
+        "title": "Кайдашева сім'я",
+        "year": "1879",
+        "cover_url": "https://libruk.com.ua/wp-content/uploads/kaidasheva-simia.jpg",
+        "author": "Іван Нечуй-Левицький",
+        "genre": "Соціально-побутова повість",
+        "isFavorite": false
+    },
+    {
+        "id": 8,
+        "title": "Солодка Даруся",
+        "year": "2004",
+        "cover_url": "https://upload.wikimedia.org/wikipedia/uk/thumb/a/ab/Solodka_Darusja_cover.jpg/250px-Solodka_Darusja_cover.jpg",
+        "author": "Марія Матіос",
+        "genre": "Роман",
+        "isFavorite": false
+    },
+    {
+        "id": 9,
+        "title": "Ворошиловград",
+        "year": "2010",
+        "cover_url": "https://toloka.to/photos/180722164127918841_f0_0.jpg",
+        "author": "Сергій Жадан",
+        "genre": "Роман",
+        "isFavorite": false
+    },
+    {
+        "id": 10,
+        "title": "Інтернат",
+        "year": "2017",
+        "cover_url": "https://static.yakaboo.ua/media/catalog/product/i/n/internat_1.jpg",
+        "author": "Сергій Жадан",
+        "genre": "Роман",
+        "isFavorite": false
+    },
+    {
+        "id": 11,
+        "title": "Маруся Чурай",
+        "year": "1979",
+        "cover_url": null,
+        "author": "Ліна Костенко",
+        "genre": "Історичний роман у віршах",
+        "isFavorite": false
+    },
+    {
+        "id": 12,
+        "title": "Записки українського самашедшого",
+        "year": "2010",
+        "cover_url": null,
+        "author": "Ліна Костенко",
+        "genre": "Роман",
+        "isFavorite": false
+    },
+    {
+        "id": 13,
+        "title": "Дім на горі",
+        "year": "1983",
+        "cover_url": null,
+        "author": "Валерій Шевчук",
+        "genre": "Роман",
+        "isFavorite": false
+    },
+    {
+        "id": 14,
+        "title": "Я (Романтика)",
+        "year": "1924",
+        "cover_url": null,
+        "author": "Микола Хвильовий",
+        "genre": "Новела",
+        "isFavorite": false
+    },
+    {
+        "id": 15,
+        "title": "Повія",
+        "year": "1884",
+        "cover_url": null,
+        "author": "Панас Мирний",
+        "genre": "Соціальний роман",
+        "isFavorite": false
+    },
+    {
+        "id": 16,
+        "title": "Хіба ревуть воли, як ясла повні?",
+        "year": "1880",
+        "cover_url": null,
+        "author": "Панас Мирний",
+        "genre": "Соціально-психологічний роман",
+        "isFavorite": false
+    },
+    {
+        "id": 17,
+        "title": "Чорний ворон",
+        "year": "2009",
+        "cover_url": null,
+        "author": "Василь Шкляр",
+        "genre": "Історичний роман",
+        "isFavorite": false
+    },
+    {
+        "id": 18,
+        "title": "Тигролови",
+        "year": "1944",
+        "cover_url": null,
+        "author": "Іван Багряний",
+        "genre": "Пригодницький роман",
+        "isFavorite": false
+    },
+    {
+        "id": 19,
+        "title": "Сад Гетсиманський",
+        "year": "1950",
+        "cover_url": null,
+        "author": "Іван Багряний",
+        "genre": "Роман",
+        "isFavorite": false
+    },
+    {
+        "id": 20,
+        "title": "Фелікс Австрія",
+        "year": "2014",
+        "cover_url": null,
+        "author": "Софія Андрухович",
+        "genre": "Роман",
+        "isFavorite": false
+    }
+]
