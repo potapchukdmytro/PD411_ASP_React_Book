@@ -18,16 +18,26 @@ import RegisterPage from "./pages/auth/registerPage/RegisterPage";
 import ToastifyProvider from "./components/toastify/ToastifyProvider";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import LoginPageByGoole from "./pages/auth/loginPage";
+import GenreListPage from "./pages/genresPage/GenreListPage";
+import { useSelector } from "react-redux";
+import { useAction } from "./store/hooks/useAction";
+import { getCookie } from "./services/CookieService";
 
 function App() {
-    const { isAuth, login, user } = useAuth();
+    const { isAuth, user } = useSelector((state) => state.auth);
+    const { loginByToken } = useAction();
 
     // auth
     useEffect(() => {
-        const authData = localStorage.getItem("auth");
-        if (authData) {
-            login();
-        }
+        const loginUser = async () => {
+            if (!isAuth) {
+                const token = getCookie("jwt");
+                if (token) {
+                    await loginByToken(token);
+                }
+            }
+        };
+        loginUser();
     }, []);
 
     // theme
@@ -76,13 +86,21 @@ function App() {
                             />
                         </Route>
 
+                        <Route
+                            path="genres"
+                            element={<GenreListPage />}
+                        ></Route>
+
                         {/* auth */}
 
                         {/* if(!isAuth){ retun <Route/> } */}
 
                         {!isAuth && (
                             <>
-                                <Route path="login" element={<LoginPageByGoole />} />
+                                <Route
+                                    path="login"
+                                    element={<LoginPageByGoole />}
+                                />
                                 <Route
                                     path="register"
                                     element={<RegisterPage />}
@@ -96,7 +114,7 @@ function App() {
                 </Routes>
                 <ToastifyProvider theme={isDark} />
             </ThemeProvider>
-            </>
+        </>
     );
 }
 

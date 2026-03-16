@@ -15,6 +15,8 @@ import { Link } from "react-router";
 import { useAuth } from "../../context/AuthContext";
 import LightModeIcon from "@mui/icons-material/LightMode";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
+import { useSelector } from "react-redux";
+import {useAction} from "./../../store/hooks/useAction";
 
 const settings = ["Профіль", "Вийти"];
 
@@ -22,7 +24,8 @@ const Navbar = ({ isDark, setIsDark }) => {
     const [anchorElNav, setAnchorElNav] = useState(null);
     const [anchorElUser, setAnchorElUser] = useState(null);
 
-    const { isAuth, logout, user } = useAuth();
+    const { logout } = useAction();
+    const {isAuth, user} = useSelector(state => state.auth);
 
     const handleOpenNavMenu = (event) => {
         setAnchorElNav(event.currentTarget);
@@ -158,6 +161,14 @@ const Navbar = ({ isDark, setIsDark }) => {
                                 sx={{ my: 2, color: "white", display: "block" }}
                             >
                                 Автори
+                            </Button>
+                        </Link>
+                        <Link to="/genres">
+                            <Button
+                                onClick={handleCloseNavMenu}
+                                sx={{ my: 2, color: "white", display: "block" }}
+                            >
+                                Жанри
                             </Button>
                         </Link>
                     </Box>

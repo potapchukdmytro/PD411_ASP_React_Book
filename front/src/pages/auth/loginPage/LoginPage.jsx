@@ -18,6 +18,7 @@ import { Link, useNavigate } from "react-router";
 import { GoogleIcon, FacebookIcon } from "./../components/CustomIcons";
 import { GoogleLogin, GoogleOAuthProvider, useGoogleLogin } from "@react-oauth/google";
 import { jwtDecode } from "jwt-decode";
+import { useAction } from "../../../store/hooks/useAction";
 
 const Card = styled(MuiCard)(({ theme }) => ({
     display: "flex",
@@ -65,8 +66,9 @@ const LoginPage = () => {
     const [errors, setErrors] = useState({});
     const emailRef = useRef(null);
     const passwordRef = useRef(null);
+    const rememberMe = useRef(null);
     const navigate = useNavigate();
-    const { login } = useAuth();
+    const { login } = useAction();
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -76,13 +78,14 @@ const LoginPage = () => {
         setOpen(false);
     };
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
 
         const cred = {
             email: emailRef.current.value,
             password: passwordRef.current.value,
-        };
+            rememberMe: rememberMe.current.checked
+        };        
 
         const result = validate(cred);
         if (!result.result) {
@@ -92,22 +95,10 @@ const LoginPage = () => {
             setErrors({});
         }
 
-        const localData = localStorage.getItem("users");
-        if (!localData) {
-            navigate("/register");
+        const response = await login(cred);
+        if(response.success) {
+            navigate("/", {replace: true});
         }
-        const users = JSON.parse(localData);
-
-        const user = users.find((u) => u.email === cred.email);
-
-        if (!user || cred.password !== user.password) {
-            alert("Пошта або пароль вказані невірно");
-            return;
-        }
-
-        localStorage.setItem("auth", JSON.stringify(user));
-        login();
-        navigate("/", { replace: true });
     };
 
     function validate(formValues) {
@@ -218,7 +209,7 @@ const LoginPage = () => {
                             />
                             {getError("password")}
                         </FormControl>
-                        <FormControlLabel
+                        <FormControlLabel inputRef={rememberMe}
                             control={
                                 <Checkbox value="remember" color="primary" />
                             }

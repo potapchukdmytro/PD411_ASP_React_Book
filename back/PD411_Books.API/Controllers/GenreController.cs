@@ -8,7 +8,7 @@ using PD411_Books.BLL.Services;
 namespace PD411_Books.API.Controllers
 {
     [ApiController]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Route("api/genre")]
     public class GenreController : ControllerBase
     {

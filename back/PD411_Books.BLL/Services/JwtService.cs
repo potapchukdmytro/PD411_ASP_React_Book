@@ -45,7 +45,7 @@ namespace PD411_Books.BLL.Services
                 audience: _jwtSettings.Audience,
                 claims: claims,
                 signingCredentials: credentials,
-                expires: DateTime.Now.AddHours(_jwtSettings.ExpHours)
+                expires: DateTime.UtcNow.AddHours(_jwtSettings.ExpHours)
                 );
 
             string jwtToken = new JwtSecurityTokenHandler().WriteToken(token);
