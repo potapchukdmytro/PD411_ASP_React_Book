@@ -22,5 +22,12 @@ namespace PD411_Books.API.Controllers
             var response = await _authService.RegisterAsync(dto);
             return this.GetAction(response);
         }
+
+        [HttpPost("login")]
+        public async Task<IActionResult> LoginAsync([FromBody]LoginDto dto)
+        {
+            var response = await _authService.LoginAsync(dto);
+            return this.GetAction(response);
+        }
     }
 }

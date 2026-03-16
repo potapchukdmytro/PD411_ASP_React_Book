@@ -48,7 +48,7 @@ namespace PD411_Books.DAL.Initializer
                     LastName = "Bookland"
                 };
 
-                await userManager.CreateAsync(admin);
+                await userManager.CreateAsync(admin, "qwerty");
                 await userManager.AddToRoleAsync(admin, "admin");
             }
 
@@ -64,7 +64,7 @@ namespace PD411_Books.DAL.Initializer
                     LastName = "Bookland"
                 };
 
-                await userManager.CreateAsync(user);
+                await userManager.CreateAsync(user, "qwerty");
                 await userManager.AddToRoleAsync(user, "user");
             }
 

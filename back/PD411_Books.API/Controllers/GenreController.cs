@@ -1,12 +1,14 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using PD411_Books.API.Extensions;
 using PD411_Books.BLL.Dtos.Genre;
 using PD411_Books.BLL.Services;
-using System.Xml.Linq;
 
 namespace PD411_Books.API.Controllers
 {
     [ApiController]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Route("api/genre")]
     public class GenreController : ControllerBase
     {

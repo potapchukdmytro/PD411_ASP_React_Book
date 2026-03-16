@@ -7,10 +7,12 @@ namespace PD411_Books.BLL.Services
     public class AuthService
     {
         private readonly UserManager<AppUserEntity> _userManager;
+        private readonly JwtService _jwtService;
 
-        public AuthService(UserManager<AppUserEntity> userManager)
+        public AuthService(UserManager<AppUserEntity> userManager, JwtService jwtService)
         {
             _userManager = userManager;
+            _jwtService = jwtService;
         }
 
         public async Task<ServiceResponse> RegisterAsync(RegisterDto dto)
@@ -33,7 +35,7 @@ namespace PD411_Books.BLL.Services
                 };
             }
 
-            var userEntity = new AppUserEntity
+            var entity = new AppUserEntity
             {
                 UserName = dto.UserName,
                 Email = dto.Email,
@@ -41,7 +43,7 @@ namespace PD411_Books.BLL.Services
                 LastName = dto.LastName
             };
 
-            var createResult = await _userManager.CreateAsync(userEntity, dto.Password);
+            var createResult = await _userManager.CreateAsync(entity, dto.Password);
 
             if (!createResult.Succeeded)
             {
@@ -52,11 +54,44 @@ namespace PD411_Books.BLL.Services
                 };
             }
 
-            await _userManager.AddToRoleAsync(userEntity, "user");
+            await _userManager.AddToRoleAsync(entity, "user");
 
             return new ServiceResponse
             {
                 Message = "Ви успішно зареєструвалися"
+            };
+        }
+
+        public async Task<ServiceResponse> LoginAsync(LoginDto dto)
+        {
+            var entity = await _userManager.FindByEmailAsync(dto.Email);
+
+            if(entity == null)
+            {
+                return new ServiceResponse
+                {
+                    Success = false,
+                    Message = $"Користувач з поштою '{dto.Email}' не існує"
+                };
+            }
+
+            bool res = await _userManager.CheckPasswordAsync(entity, dto.Password);
+
+            if(!res)
+            {
+                return new ServiceResponse
+                {
+                    Success = false,
+                    Message = $"Пароль вказано невірно"
+                };
+            }
+
+            string jwtToken = _jwtService.GenerateAccessToken(entity);
+
+            return new ServiceResponse
+            {
+                Message = "Успішний вхід",
+                Payload = jwtToken
             };
         }
 
