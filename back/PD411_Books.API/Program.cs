@@ -109,7 +109,6 @@ var app = builder.Build();
 
 // Custom middlewares
 app.UseMiddleware<ExceptionMiddleware>();
-app.UseMiddleware<LogMiddleware>();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -117,9 +116,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
-// CORS - дозволяємо реакту кидати запити на наш бек
-app.UseCors(corsName);
 
 app.UseHttpsRedirection();
 
@@ -163,11 +159,16 @@ app.UseStaticFiles(new StaticFileOptions
     RequestPath = StaticFilesSettings.ShareUrl
 });
 
+// CORS - дозволяємо реакту кидати запити на наш бек
+app.UseCors(corsName);
+
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
 
 app.SeedAsync().Wait();
+
+app.UseMiddleware<LogMiddleware>();
 
 app.Run();
