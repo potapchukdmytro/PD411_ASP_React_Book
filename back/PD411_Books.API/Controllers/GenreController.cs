@@ -13,15 +13,24 @@ namespace PD411_Books.API.Controllers
     public class GenreController : ControllerBase
     {
         private readonly GenreService _genreService;
+        private readonly ILogger<GenreController> _logger;
 
-        public GenreController(GenreService genreService)
+        public GenreController(GenreService genreService, ILogger<GenreController> logger)
         {
             _genreService = genreService;
+            _logger = logger;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAsync()
         {
+            throw new NotImplementedException();
+            _logger.LogInformation("Get all genres request");
+            //_logger.LogCritical("Critical");
+            //_logger.LogError("Error");
+            //_logger.LogWarning("Warning");
+            //_logger.LogTrace("Trace");
+
             var response = await _genreService.GetAllAsync();
             return this.GetAction(response);
         }
@@ -37,6 +46,11 @@ namespace PD411_Books.API.Controllers
         public async Task<IActionResult> GetAsync(string name)
         {
             var response = await _genreService.GetByNameAsync(name);
+
+            if (!response.Success)
+            {
+                _logger.LogWarning(2000, $"{DateTime.Now} - All genres. Response code -> BAD REQUEST(400)");
+            }
             return this.GetAction(response);
         }
 

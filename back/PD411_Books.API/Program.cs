@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
+using PD411_Books.API.Middlewares;
 using PD411_Books.API.Settings;
 using PD411_Books.BLL.Services;
 using PD411_Books.BLL.Settings;
@@ -79,10 +80,10 @@ builder.Services.AddSwaggerGen();
 
 // Add authentication
 string? secretKey = builder.Configuration["JwtSettings:SecretKey"];
-if (string.IsNullOrEmpty(secretKey))
-{
-    throw new ArgumentNullException("Jwt secret key is null");
-}
+//if (string.IsNullOrEmpty(secretKey))
+//{
+//    throw new ArgumentNullException("Jwt secret key is null");
+//}
 
 builder.Services.AddAuthentication(options =>
 {
@@ -100,11 +101,15 @@ builder.Services.AddAuthentication(options =>
         ValidateLifetime = true,
         ValidAudience = builder.Configuration["JwtSettings:Audience"],
         ValidIssuer = builder.Configuration["JwtSettings:Issuer"],
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey))
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey ?? ""))
     };
 });
 
 var app = builder.Build();
+
+// Custom middlewares
+app.UseMiddleware<ExceptionMiddleware>();
+app.UseMiddleware<LogMiddleware>();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -158,7 +163,7 @@ app.UseStaticFiles(new StaticFileOptions
     RequestPath = StaticFilesSettings.ShareUrl
 });
 
-app.UseAuthentication() ;
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
