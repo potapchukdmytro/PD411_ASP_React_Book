@@ -25,6 +25,7 @@ builder.Services.AddScoped<ImageService>();
 builder.Services.AddScoped<GenreService>();
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<JwtService>();
+builder.Services.AddScoped<BookService>();
 
 // Settings
 builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));
