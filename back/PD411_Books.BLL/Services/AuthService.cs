@@ -86,7 +86,7 @@ namespace PD411_Books.BLL.Services
                 };
             }
 
-            string jwtToken = _jwtService.GenerateAccessToken(entity);
+            string jwtToken = await _jwtService.GenerateAccessTokenAsync(entity);
 
             return new ServiceResponse
             {
