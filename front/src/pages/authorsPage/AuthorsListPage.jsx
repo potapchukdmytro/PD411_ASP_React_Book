@@ -1,22 +1,19 @@
 import AuthorsCard from "./AuthorsCard";
-import { Box, Grid } from "@mui/material";
-import { useAction } from "../../store/hooks/useAction";
-import { useSelector } from "react-redux";
-import { useEffect } from "react";
+import {Box, CircularProgress, Grid} from "@mui/material";
+import {useGetAuthorsQuery} from "../../store/services/AuthorApi.js";
 
 // sx == style
 
 const AuthorsListPage = () => {
-    const {loadAuthors} = useAction();
-    const {authors} = useSelector(state => state.author);
+    const {data, isSuccess, isLoading} = useGetAuthorsQuery();
 
-    useEffect(() => {
-        const loadAction = async () => {
-            await loadAuthors();
-        }
-
-        loadAction();
-    }, []);
+    if(isLoading) {
+        return  (
+            <Box sx={{ display: "flex", justifyContent: "center" }}>
+                <CircularProgress enableTrackSlot size="3rem" sx={{ mt: 4 }} />
+            </Box>
+        )
+    }
 
     return (
         <Box
@@ -26,13 +23,15 @@ const AuthorsListPage = () => {
                 flexDirection: "column",
             }}
         >
-            <Grid container spacing={2} mx="100px" my="50px">
-                {authors.map((a) => (
-                    <Grid item size={4} key={a.id}>
-                        <AuthorsCard author={a} />
-                    </Grid>
-                ))}
-            </Grid>
+            {isSuccess &&
+                <Grid container spacing={2} mx="100px" my="50px">
+                    {data.payload.map((a) => (
+                        <Grid size={4} key={a.id}>
+                            <AuthorsCard author={a}/>
+                        </Grid>
+                    ))}
+                </Grid>
+            }
         </Box>
     );
 };

@@ -13,11 +13,13 @@ namespace PD411_Books.BLL.MapperProfiles
 
             // CreateAuthorDto -> AuthorEntity
             CreateMap<CreateAuthorDto, AuthorEntity>()
-                .ForMember(dest => dest.Image, opt => opt.Ignore());
+                .ForMember(dest => dest.Image, opt => opt.Ignore())
+                .ForMember(dest => dest.BirthDate, opt => opt.MapFrom(src => src.BirthDate.ToUniversalTime()));
 
             // UpdateAuthorDto -> AuthorEntity
             CreateMap<UpdateAuthorDto, AuthorEntity>()
-                .ForMember(dest => dest.Image, opt => opt.Ignore());
+                .ForMember(dest => dest.Image, opt => opt.Ignore())
+                .ForMember(dest => dest.BirthDate, opt => opt.MapFrom(src => src.BirthDate.ToUniversalTime()));
         }
     }
 }

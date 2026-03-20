@@ -8,7 +8,12 @@ import Stack from "@mui/material/Stack";
 import MuiCard from "@mui/material/Card";
 import { styled } from "@mui/material/styles";
 import { useFormik } from "formik";
-import { object, string, number } from "yup";
+import { object, string } from "yup";
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import {useState} from "react";
+import {useCreateAuthorMutation} from "../../store/services/AuthorApi.js";
+import {useNavigate} from "react-router";
+import {toast} from "react-toastify";
 
 const Card = styled(MuiCard)(({ theme }) => ({
     display: "flex",
@@ -52,21 +57,51 @@ const SignInContainer = styled(Stack)(({ theme }) => ({
     },
 }));
 
+const VisuallyHiddenInput = styled('input')({
+    clip: 'rect(0 0 0 0)',
+    clipPath: 'inset(50%)',
+    height: 1,
+    overflow: 'hidden',
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    whiteSpace: 'nowrap',
+    width: 1,
+});
+
 const initValues = {
-    firstName: "",
-    lastName: "",
-    birthday: "",
-    country: "",
-    image: "",
+    name: "",
+    birthDate: new Date().toISOString().slice(0, 16),
+    country: ""
 };
 
-
-
-
 const AuthorsCreateForm = () => {
-    const handleSubmit = (values) => {
-        console.log(values);
+    const [image, setImage] = useState(null);
+    const [createAuthor, {isError, error}] = useCreateAuthorMutation();
+    const navigate = useNavigate();
+
+    const handleSubmit = async (values) => {
+        const formData = new FormData();
+        formData.append("name", values.name);
+        formData.append("birthDate", values.birthDate);
+        formData.append("country", values.country);
+        if(image) {
+            formData.append("image", image);
+        }
+
+        await createAuthor(formData);
+        if(!isError) {
+            navigate("/authors");
+        } else {
+            toast.error(error);
+        }
     };
+
+    const changeImageHandle = (event) => {
+        if(event.target.files && event.target.files.length > 0) {
+            setImage(event.target.files[0]);
+        }
+    }
 
     const getError = (prop) => {
         return formik.touched[prop] && formik.errors[prop] ? (
@@ -77,21 +112,10 @@ const AuthorsCreateForm = () => {
     };
 
     // validation scheme
-    const maxYear = new Date().getFullYear();
     const validationScheme = object({
-        firstName: string()
-            .required("Обов'язкове поле")
-            .max(100, "Максимальна довжина 100 символів"),
-        lastName: string()
-            .required("Обов'язкове поле")
-            .max(100, "Максимальна довжина 100 символів"),
-        birthday: number()
-            .min(0, "Рік не може бути від'ємним")
-            .max(maxYear, `Рік не може бути більшим за ${maxYear}`)
-            .required("Обов'язкове поле"),                
-        country: string().max(100, "Максимальна довжина 100 символів"),
-
-
+        name: string()
+            .required("Обов'язкове поле"),
+        country: string().max(100, "Максимальна довжина 100 символів")
     });
 
     // formik
@@ -127,49 +151,35 @@ const AuthorsCreateForm = () => {
                         }}
                     >
                         <FormControl>
-                            <FormLabel htmlFor="firstName">Ім'я</FormLabel>
+                            <FormLabel htmlFor="name">Ім'я</FormLabel>
                             <TextField
-                                name="firstName"
+                                name="name"
                                 placeholder="Ім'я"
-                                autoComplete="firstName"
+                                autoComplete="name"
                                 autoFocus
                                 fullWidth
                                 variant="outlined"
-                                value={formik.values.firstName}
+                                value={formik.values.name}
                                 onChange={formik.handleChange}
                                 onBlur={formik.handleBlur}
                             />
                         </FormControl>
-                        {getError("firstName")}
+                        {getError("name")}
                         <FormControl>
-                            <FormLabel htmlFor="lastName">Прізвище</FormLabel>
+                            <FormLabel htmlFor="birthDate">Рік народження</FormLabel>
                             <TextField
-                                name="lastName"
-                                placeholder="Прізвище автора"
-                                autoComplete="lastName"
-                                fullWidth
-                                variant="outlined"
-                                value={formik.values.lastName}
-                                onChange={formik.handleChange}
-                                onBlur={formik.handleBlur}
-                            />
-                        </FormControl>
-                        {getError("lastName")}
-                        <FormControl>
-                            <FormLabel htmlFor="birthday">Рік народження</FormLabel>
-                            <TextField
-                                name="birthday"
+                                name="birthDate"
                                 placeholder="Рік народження"
-                                autoComplete="birthday"
+                                autoComplete="birthDate"
                                 fullWidth
-                                type="number"
+                                type="datetime-local"
                                 variant="outlined"
-                                value={formik.values.birthday}
+                                value={formik.values.birthDate}
                                 onChange={formik.handleChange}
                                 onBlur={formik.handleBlur}
                             />
 
-                            {getError("birthday")}
+                            {getError("birthDate")}
                         </FormControl>                        
                         <FormControl>
                             <FormLabel htmlFor="country">Країна</FormLabel>
@@ -188,16 +198,20 @@ const AuthorsCreateForm = () => {
 
                         <FormControl>
                             <FormLabel htmlFor="image">Фото автора</FormLabel>
-                            <TextField
-                                name="image"
-                                placeholder="Фото автора"
-                                autoComplete="image"
-                                fullWidth
-                                variant="outlined"
-                                value={formik.values.image}
-                                onChange={formik.handleChange}
-                                onBlur={formik.handleBlur}
-                            />
+                            <Button
+                                component="label"
+                                role={undefined}
+                                variant="contained"
+                                tabIndex={-1}
+                                startIcon={<CloudUploadIcon />}
+                            >
+                                Upload files
+                                <VisuallyHiddenInput
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={changeImageHandle}
+                                />
+                            </Button>
                         </FormControl>
                         <Button
                             type="submit"
