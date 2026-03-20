@@ -1,20 +1,12 @@
 import axios from "axios";
+import {api} from "../../../api.js";
 
 export const loadBooks = () => async (dispatch) => {
-    const booksUrl = import.meta.env.VITE_BOOKS_URL;
-    const pageCount = 150;
-    const page = 1;
-    const url = `${booksUrl}?page_size=${pageCount}&page=${page}`;
-
     try {
-        const response = await axios.get(url);
-        const { data, status } = response;
-
-        if (status === 200) {
-            dispatch({ type: "loadBooks", payload: data.data.items });
-            return true;
-        } else {
-            return false;
+        const response = await api.get("book");
+        if(response.status === 200) {
+            const {data} = response;
+            dispatch({ type: "loadBooks", payload: data.payload });
         }
     } catch (error) {
         throw error;

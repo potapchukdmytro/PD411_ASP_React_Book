@@ -1,12 +1,15 @@
-using PD411_Books.BLL.Dtos.Book;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PD411_Books.API.Extensions;
-using PD411_Books.BLL.Services;
 using PD411_Books.API.Settings;
+using PD411_Books.BLL.Dtos.Book;
+using PD411_Books.BLL.Services;
 
 namespace PD411_Books.API.Controllers
 {
     [ApiController]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Route("api/book")]
     public class BookController : ControllerBase
     {

@@ -6,20 +6,21 @@ import TableRow from "@mui/material/TableRow";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { getCookie } from "../../services/CookieService";
+import {useNavigate} from "react-router";
+import {api} from "../../api.js";
 
 const GenreListPage = () => {
     const [genres, setGenres] = useState([]);
+    const navigate = useNavigate();
 
     const fetchGenres = async () => {
-        const url = import.meta.env.VITE_API_URL + "genre";
-        const token = getCookie("jwt");
-        const response = await axios.get(url, {
-            headers: {
-                "Authorization": `Bearer ${token}`
+        try {
+            const response = await api.get("genre");
+            if (response.status === 200) {
+                setGenres(response.data.payload);
             }
-        });
-        if (response.status === 200) {
-            setGenres(response.data.payload);
+        } catch {
+            navigate("/login");
         }
     };
 

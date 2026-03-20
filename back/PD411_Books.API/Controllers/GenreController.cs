@@ -8,7 +8,7 @@ using PD411_Books.BLL.Services;
 namespace PD411_Books.API.Controllers
 {
     [ApiController]
-    //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Route("api/genre")]
     public class GenreController : ControllerBase
     {
@@ -24,8 +24,8 @@ namespace PD411_Books.API.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAsync()
         {
-            throw new NotImplementedException();
-            _logger.LogInformation("Get all genres request");
+            //throw new NotImplementedException();
+            //_logger.LogInformation("Get all genres request");
             //_logger.LogCritical("Critical");
             //_logger.LogError("Error");
             //_logger.LogWarning("Warning");
