@@ -29,5 +29,12 @@ namespace PD411_Books.API.Controllers
             var response = await _authService.LoginAsync(dto);
             return this.GetAction(response);
         }
+
+        [HttpGet("confirmEmail")]
+        public async Task<IActionResult> ConfirmEmailAsync([FromQuery]string uid, [FromQuery]string t)
+        {
+            var response = await _authService.ConfirmEmailAsync(uid, t);
+            return this.GetAction(response);
+        }
     }
 }

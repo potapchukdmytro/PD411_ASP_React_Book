@@ -1,18 +1,54 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using PD411_Books.BLL.Dtos.Auth;
 using PD411_Books.DAL.Entities.Identity;
+using System.Text;
 
 namespace PD411_Books.BLL.Services
 {
     public class AuthService
     {
         private readonly UserManager<AppUserEntity> _userManager;
+        private readonly EmailService _emailService;
         private readonly JwtService _jwtService;
 
-        public AuthService(UserManager<AppUserEntity> userManager, JwtService jwtService)
+        public AuthService(UserManager<AppUserEntity> userManager, JwtService jwtService, EmailService emailService)
         {
             _userManager = userManager;
             _jwtService = jwtService;
+            _emailService = emailService;
+        }
+
+        public async Task<ServiceResponse> ConfirmEmailAsync(string userId, string base64token)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+
+            if(user == null)
+            {
+                return new ServiceResponse
+                {
+                    Success = false,
+                    Message = $"Користувач з id '{userId}' не знайдений"
+                };
+            }
+
+            byte[] bytes = Convert.FromBase64String(base64token);
+            string token = Encoding.UTF8.GetString(bytes);
+
+            var result = await _userManager.ConfirmEmailAsync(user, token);
+
+            if(!result.Succeeded)
+            {
+                return new ServiceResponse
+                {
+                    Success = false,
+                    Message = result.Errors.First().Description
+                };
+            }
+
+            return new ServiceResponse
+            {
+                Message = "Пошта успішно підтверджена"
+            };
         }
 
         public async Task<ServiceResponse> RegisterAsync(RegisterDto dto)
@@ -35,7 +71,7 @@ namespace PD411_Books.BLL.Services
                 };
             }
 
-            var entity = new AppUserEntity
+            var user = new AppUserEntity
             {
                 UserName = dto.UserName,
                 Email = dto.Email,
@@ -43,7 +79,7 @@ namespace PD411_Books.BLL.Services
                 LastName = dto.LastName
             };
 
-            var createResult = await _userManager.CreateAsync(entity, dto.Password);
+            var createResult = await _userManager.CreateAsync(user, dto.Password);
 
             if (!createResult.Succeeded)
             {
@@ -54,7 +90,22 @@ namespace PD411_Books.BLL.Services
                 };
             }
 
-            await _userManager.AddToRoleAsync(entity, "user");
+            await _userManager.AddToRoleAsync(user, "user");
+
+            // Send email confirmation message
+            string token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+            byte[] bytes = Encoding.UTF8.GetBytes(token);
+            string base64Token = Convert.ToBase64String(bytes);
+
+            string root = Directory.GetCurrentDirectory();
+            string templatePath = Path.Combine(root, "Storage", "Templates", "ConfrimEmail.html");
+            if(File.Exists(templatePath))
+            {
+                string html = await File.ReadAllTextAsync(templatePath);
+                html = html.Replace("{id}", user.Id);
+                html = html.Replace("{token}", base64Token);
+                await _emailService.SendEmailAsync(user.Email, "Підтвердження пошти", html, true);
+            }
 
             return new ServiceResponse
             {
