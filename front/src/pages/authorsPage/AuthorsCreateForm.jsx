@@ -10,11 +10,11 @@ import {styled} from "@mui/material/styles";
 import {useFormik} from "formik";
 import {object, string} from "yup";
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
-import {useState} from "react";
+import {useRef, useState} from "react";
 import {useCreateAuthorMutation} from "../../store/services/AuthorApi.js";
 import {useNavigate} from "react-router";
 import {toast} from "react-toastify";
-import "./style.css";
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 
 const Card = styled(MuiCard)(({theme}) => ({
     display: "flex",
@@ -76,7 +76,9 @@ const initValues = {
 };
 
 const AuthorsCreateForm = () => {
+    const [imageHover, setImageHover] = useState(false);
     const [image, setImage] = useState(null);
+    const imageInput = useRef(null);
     const [createAuthor, {isError, error}] = useCreateAuthorMutation();
     const navigate = useNavigate();
 
@@ -104,6 +106,10 @@ const AuthorsCreateForm = () => {
     }
 
     const deleteImageHandle = () => {
+        setImageHover(false);
+        if(imageInput.current) {
+            imageInput.current.value = null;
+        }
         setImage(null);
     }
 
@@ -214,19 +220,33 @@ const AuthorsCreateForm = () => {
                                     type="file"
                                     accept="image/*"
                                     onChange={changeImageHandle}
+                                    ref={imageInput}
                                 />
                             </Button>
                         </FormControl>
                         {image &&
-                            <Box sx={{textAlign: 'center', width: "100%"}}>
+                            <Box sx={{textAlign: 'center', width: "100%", position: "relative", cursor: "pointer"}}
+                                 onMouseEnter={() => setImageHover(true)}
+                                 onMouseLeave={() => setImageHover(false)}
+                                 className="hover-pointer">
                                 <Box component="img"
-                                     className="form-image"
-                                     onClick={deleteImageHandle}
-                                     sx={{objectFit: "contain"}}
+                                     sx={{objectFit: "contain", opacity: imageHover ? "0.5" : "1"}}
                                      src={URL.createObjectURL(image)}
                                      height="300px"
                                      width="100%">
                                 </Box>
+                                {imageHover &&
+                                    <Box
+                                        onClick={deleteImageHandle}
+                                         sx={{
+                                             position: "absolute",
+                                             top: "50%",
+                                             left: "50%",
+                                             transform: "translate(-50%, -50%)"
+                                         }}>
+                                        <DeleteForeverIcon color="error" sx={{fontSize: "3em"}}/>
+                                    </Box>
+                                }
                             </Box>
                         }
                         <Button
