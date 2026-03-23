@@ -174,7 +174,11 @@ namespace PD411_Books.BLL.Services
 
         public async Task<ServiceResponse> GetAllAsync()
         {
-            var entities = await _bookRepository.Books.ToListAsync();
+            var entities = await _bookRepository.Books
+                .Include(b => b.Genres)
+                .Include(b => b.Author)
+                .ToListAsync();
+
             var dtos = _mapper.Map<List<BookDto>>(entities);
 
             return new ServiceResponse

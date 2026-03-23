@@ -12,6 +12,7 @@ using PD411_Books.DAL.Entities.Identity;
 using PD411_Books.DAL.Initializer;
 using PD411_Books.DAL.Repositories;
 using System.Text;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -63,7 +64,10 @@ builder.Services.AddIdentity<AppUserEntity, AppRoleEntity>(options =>
     .AddEntityFrameworkStores<AppDbContext>()
     .AddDefaultTokenProviders();
 
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+});
 
 // CORS - дозволяємо реакту кидати запити на наш бек
 string corsName = "allowAll";

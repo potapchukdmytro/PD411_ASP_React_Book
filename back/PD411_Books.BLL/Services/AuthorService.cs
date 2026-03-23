@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using PD411_Books.BLL.Dtos.Author;
+using PD411_Books.BLL.Dtos.Book;
 using PD411_Books.DAL.Entities;
 using PD411_Books.DAL.Repositories;
 
@@ -174,7 +175,10 @@ namespace PD411_Books.BLL.Services
 
         public async Task<ServiceResponse> GetAllAsync()
         {
-            var entities = await _authorRepository.Authors.ToListAsync();
+            var entities = await _authorRepository.Authors
+                .Include(a => a.Books)
+                .ToListAsync();
+
             var dtos = _mapper.Map<List<AuthorDto>>(entities);
 
             return new ServiceResponse 

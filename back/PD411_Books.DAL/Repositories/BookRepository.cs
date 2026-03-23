@@ -12,7 +12,6 @@ namespace PD411_Books.DAL.Repositories
         }
         public IQueryable<BookEntity> Books => GetAll();
 
-
         public async Task<BookEntity?> GetByNameAsync(string title)
         {
             return await Books

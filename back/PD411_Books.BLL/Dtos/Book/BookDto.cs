@@ -1,3 +1,4 @@
+using PD411_Books.BLL.Dtos.Author;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +16,7 @@ namespace PD411_Books.BLL.Dtos.Book
         public float Rating { get; set; } = 0f;
         public int Pages { get; set; } = 0;
         public int PublishYear { get; set; } = DateTime.UtcNow.Year;
-        public int? AuthorId { get; set; }
+        public List<string> Genres { get; set; } = [];
+        public AuthorDto? Author { get; set; }
     }
 }

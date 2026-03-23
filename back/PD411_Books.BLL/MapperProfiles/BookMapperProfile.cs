@@ -9,7 +9,8 @@ namespace PD411_Books.BLL.MapperProfiles
         public BookMapperProfile()
         {
             // BookEntity -> BookDto
-            CreateMap<BookEntity, BookDto>();
+            CreateMap<BookEntity, BookDto>()
+                .ForMember(dest => dest.Genres, opt => opt.MapFrom(src => src.Genres.Select(g => g.Name)));
 
             // CreateBookDto -> BookEntity
             CreateMap<CreateBookDto, BookEntity>()
