@@ -16,6 +16,7 @@ import { Rating } from "@mui/material";
 import { useDispatch } from "react-redux";
 import axios from "axios";
 import { useAction } from "../../store/hooks/useAction";
+import {env} from "../../env.js";
 
 const BookCard = ({ book }) => {
     const {deleteBook} = useAction();
@@ -52,11 +53,18 @@ const BookCard = ({ book }) => {
                 height="350"
                 image={
                     book.image
-                        ? book.image
-                        : "https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/No-Image-Placeholder.svg/1665px-No-Image-Placeholder.svg.png"
+                        ? env.bookImages + book.image
+                        : env.noImage
                 }
                 alt={book.title}
             />
+            <CardContent>
+                <Typography variant="body2" color="textSecondary" component="p">
+                    {
+                        book.genres.join(", ")
+                    }
+                </Typography>
+            </CardContent>
             <CardContent sx={{textAlign: "center"}}>
                 <Typography variant="body2" sx={{ color: "text.secondary" }}>
                     <Rating readOnly max={10} value={book.rating * 2}/>

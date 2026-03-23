@@ -4,32 +4,33 @@ import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
-import { date } from 'yup';
+import {env} from "../../env.js";
 
 
-const AuthorsCard = ({ author }) => {  
+const AuthorsCard = ({author}) => {
     return (
-        <Card sx={{ maxWidth: 345 }}>
-      <CardMedia
-                sx={{ objectFit: 'cover' }}
+        <Card sx={{maxWidth: 345}}>
+            <CardMedia
+                sx={{objectFit: 'cover'}}
                 component="img"
                 height="350"
-        image={author.image !== null
-          ? import.meta.env.VITE_AUTHOR_IMAGE_URL + author.image
-          : import.meta.env.VITE_SHARE_IMAGE_URL + "no_image.jpg"
-        }
-        title={author.name}
-      />
-      <CardContent>
-        <Typography gutterBottom variant="h5" component="div">
-          {author.name}
-        </Typography>
-        <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-          Україна, {author.birthDate}
-        </Typography>
-      </CardContent>
-    </Card>
-  );
+                image={
+                    author.image
+                        ? env.authorImages + author.image
+                        : env.noImage
+                }
+                title={author.name}
+            />
+            <CardContent>
+                <Typography gutterBottom variant="h5" component="div">
+                    {author.name}
+                </Typography>
+                <Typography variant="body2" sx={{color: 'text.secondary'}}>
+                    Україна, {author.birthDate}
+                </Typography>
+            </CardContent>
+        </Card>
+    );
 };
 
 export default AuthorsCard;

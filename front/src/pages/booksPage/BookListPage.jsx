@@ -17,6 +17,8 @@ const BookListPage = () => {
     // отримання масиву книг та стану завантаження
     const { books, isLoaded } = useSelector((state) => state.book);
 
+    console.log(books);
+
     useEffect(() => {
         loadBooks()
             .then((result) => {})

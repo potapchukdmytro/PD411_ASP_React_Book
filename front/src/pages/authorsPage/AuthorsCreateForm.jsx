@@ -6,16 +6,17 @@ import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 import MuiCard from "@mui/material/Card";
-import { styled } from "@mui/material/styles";
-import { useFormik } from "formik";
-import { object, string } from "yup";
+import {styled} from "@mui/material/styles";
+import {useFormik} from "formik";
+import {object, string} from "yup";
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import {useState} from "react";
 import {useCreateAuthorMutation} from "../../store/services/AuthorApi.js";
 import {useNavigate} from "react-router";
 import {toast} from "react-toastify";
+import "./style.css";
 
-const Card = styled(MuiCard)(({ theme }) => ({
+const Card = styled(MuiCard)(({theme}) => ({
     display: "flex",
     flexDirection: "column",
     alignSelf: "center",
@@ -34,8 +35,7 @@ const Card = styled(MuiCard)(({ theme }) => ({
     }),
 }));
 
-const SignInContainer = styled(Stack)(({ theme }) => ({
-    height: "calc((1 - var(--template-frame-height, 0)) * 100dvh)",
+const SignInContainer = styled(Stack)(({theme}) => ({
     minHeight: "100%",
     padding: theme.spacing(2),
     [theme.breakpoints.up("sm")]: {
@@ -85,12 +85,12 @@ const AuthorsCreateForm = () => {
         formData.append("name", values.name);
         formData.append("birthDate", values.birthDate);
         formData.append("country", values.country);
-        if(image) {
+        if (image) {
             formData.append("image", image);
         }
 
         await createAuthor(formData);
-        if(!isError) {
+        if (!isError) {
             navigate("/authors");
         } else {
             toast.error(error);
@@ -98,14 +98,18 @@ const AuthorsCreateForm = () => {
     };
 
     const changeImageHandle = (event) => {
-        if(event.target.files && event.target.files.length > 0) {
+        if (event.target.files && event.target.files.length > 0) {
             setImage(event.target.files[0]);
         }
     }
 
+    const deleteImageHandle = () => {
+        setImage(null);
+    }
+
     const getError = (prop) => {
         return formik.touched[prop] && formik.errors[prop] ? (
-            <Typography sx={{ mx: 1, color: "red" }} variant="h7">
+            <Typography sx={{mx: 1, color: "red"}} variant="h7">
                 {formik.errors[prop]}
             </Typography>
         ) : null;
@@ -180,7 +184,7 @@ const AuthorsCreateForm = () => {
                             />
 
                             {getError("birthDate")}
-                        </FormControl>                        
+                        </FormControl>
                         <FormControl>
                             <FormLabel htmlFor="country">Країна</FormLabel>
                             <TextField
@@ -203,7 +207,7 @@ const AuthorsCreateForm = () => {
                                 role={undefined}
                                 variant="contained"
                                 tabIndex={-1}
-                                startIcon={<CloudUploadIcon />}
+                                startIcon={<CloudUploadIcon/>}
                             >
                                 Upload files
                                 <VisuallyHiddenInput
@@ -213,6 +217,18 @@ const AuthorsCreateForm = () => {
                                 />
                             </Button>
                         </FormControl>
+                        {image &&
+                            <Box sx={{textAlign: 'center', width: "100%"}}>
+                                <Box component="img"
+                                     className="form-image"
+                                     onClick={deleteImageHandle}
+                                     sx={{objectFit: "contain"}}
+                                     src={URL.createObjectURL(image)}
+                                     height="300px"
+                                     width="100%">
+                                </Box>
+                            </Box>
+                        }
                         <Button
                             type="submit"
                             fullWidth
