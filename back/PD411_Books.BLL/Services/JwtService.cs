@@ -1,13 +1,16 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
+using Npgsql.Internal;
+using PD411_Books.BLL.Dtos.Auth;
 using PD411_Books.BLL.Settings;
+using PD411_Books.DAL;
+using PD411_Books.DAL.Entities;
 using PD411_Books.DAL.Entities.Identity;
-using System.Data;
+using PD411_Books.DAL.Repositories;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace PD411_Books.BLL.Services
@@ -16,16 +19,69 @@ namespace PD411_Books.BLL.Services
     {
         private readonly JwtSettings _jwtSettings;
         private readonly UserManager<AppUserEntity> _userManager;
+        private readonly RefreshTokenRepository _refreshTokenRepository;
 
-        public JwtService(IOptions<JwtSettings> jwtOptions, UserManager<AppUserEntity> userManager)
+        public JwtService(IOptions<JwtSettings> jwtOptions, UserManager<AppUserEntity> userManager, RefreshTokenRepository refreshTokenRepository)
         {
             _jwtSettings = jwtOptions.Value;
             _userManager = userManager;
+            _refreshTokenRepository = refreshTokenRepository;
         }
 
-        public async Task<string> GenerateAccessTokenAsync(AppUserEntity user)
+        private RefreshTokenEntity GenerateRefreshToken()
         {
-            if(string.IsNullOrEmpty(_jwtSettings.SecretKey))
+            var bytes = new byte[64];
+            var rng = RandomNumberGenerator.Create();
+            rng.GetBytes(bytes);
+
+            string token = Convert.ToBase64String(bytes);
+            return new RefreshTokenEntity
+            {
+                Token = token,
+                Expires = DateTime.UtcNow.AddDays(7),
+            };
+        }
+
+        public async Task<JwtDto> GenerateTokensAsync(AppUserEntity user)
+        {
+            var accessToken = await GenerateAccessTokenAsync(user);
+            var refreshToken = GenerateRefreshToken();
+            refreshToken.UserId = user.Id;
+            await _refreshTokenRepository.CreateAsync(refreshToken);
+
+            return new JwtDto 
+            { 
+                AccessToken = accessToken,
+                RefreshToken = refreshToken.Token
+            };
+        }
+
+        public async Task<ServiceResponse> RefreshAsync(string refreshToken)
+        {
+            var oldToken = await _refreshTokenRepository.GetByTokenAsync(refreshToken);
+
+            if(oldToken == null || oldToken.IsExpired || oldToken.IsUsed)
+            {
+                return ServiceResponse.Error("Refresh token не дійсний");
+            }
+
+            var user = await _userManager.FindByIdAsync(oldToken.UserId);
+
+            if(user == null)
+            {
+                return ServiceResponse.Error("Refresh token не дійсний");
+            }
+
+            oldToken.IsUsed = true;
+            await _refreshTokenRepository.UpdateAsync(oldToken);
+
+            var tokens = await GenerateTokensAsync(user);
+            return ServiceResponse.Success("Токени успішно згенеровані", tokens);
+        }
+
+        private async Task<string> GenerateAccessTokenAsync(AppUserEntity user)
+        {
+            if (string.IsNullOrEmpty(_jwtSettings.SecretKey))
             {
                 throw new ArgumentNullException("Jwt secret key is null");
             }

@@ -19,6 +19,7 @@ namespace PD411_Books.DAL
         public DbSet<BookEntity> Books { get; set; }
         public DbSet<AuthorEntity> Authors { get; set; }
         public DbSet<GenreEntity> Genres { get; set; }
+        public DbSet<RefreshTokenEntity> RefreshTokens { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -123,6 +124,11 @@ namespace PD411_Books.DAL
 
                 // Each User can have many entries in the UserRole join table
                 b.HasMany(e => e.UserRoles)
+                    .WithOne(e => e.User)
+                    .HasForeignKey(ur => ur.UserId)
+                    .IsRequired();
+
+                b.HasMany(e => e.RefreshTokens)
                     .WithOne(e => e.User)
                     .HasForeignKey(ur => ur.UserId)
                     .IsRequired();

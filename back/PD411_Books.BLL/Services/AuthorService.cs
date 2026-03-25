@@ -28,7 +28,7 @@ namespace PD411_Books.BLL.Services
             {
                 ServiceResponse response = await _imageService.SaveAsync(dto.Image, imagesPath);
 
-                if(!response.Success)
+                if(!response.IsSuccess)
                 {
                     return response;
                 }
@@ -42,7 +42,7 @@ namespace PD411_Books.BLL.Services
             {
                 return new ServiceResponse
                 {
-                    Success = false,
+                    IsSuccess = false,
                     Message = "Не вдалося додати автора"
                 };
             }
@@ -62,7 +62,7 @@ namespace PD411_Books.BLL.Services
             {
                 return new ServiceResponse
                 {
-                    Success = false,
+                    IsSuccess = false,
                     Message = $"Автора з id {dto.Id} не існує"
                 };
             }
@@ -77,7 +77,7 @@ namespace PD411_Books.BLL.Services
                     string imagePath = Path.Combine(imagesPath, entity.Image);
                     var deleteResponse = _imageService.Delete(imagePath);
 
-                    if (!deleteResponse.Success)
+                    if (!deleteResponse.IsSuccess)
                     {
                         return deleteResponse;
                     }
@@ -85,7 +85,7 @@ namespace PD411_Books.BLL.Services
 
                 var saveResponse = await _imageService.SaveAsync(dto.Image, imagesPath);
 
-                if (!saveResponse.Success)
+                if (!saveResponse.IsSuccess)
                 {
                     return saveResponse;
                 }
@@ -99,7 +99,7 @@ namespace PD411_Books.BLL.Services
             {
                 return new ServiceResponse
                 {
-                    Success = false,
+                    IsSuccess = false,
                     Message = $"Не вдалося оновити автора"
                 };
             }
@@ -119,7 +119,7 @@ namespace PD411_Books.BLL.Services
             {
                 return new ServiceResponse
                 {
-                    Success = false,
+                    IsSuccess = false,
                     Message = $"Автор з id {id} не існує"
                 };
             }
@@ -129,7 +129,7 @@ namespace PD411_Books.BLL.Services
                 string imagePath = Path.Combine(imagesPath, entity.Image);
                 var response = _imageService.Delete(imagePath);
 
-                if(!response.Success)
+                if(!response.IsSuccess)
                 {
                     return response;
                 }
@@ -141,7 +141,7 @@ namespace PD411_Books.BLL.Services
             {
                 return new ServiceResponse
                 {
-                    Success = false,
+                    IsSuccess = false,
                     Message = $"Не вдалося видалити автора"
                 };
             }
@@ -161,7 +161,7 @@ namespace PD411_Books.BLL.Services
             {
                 return new ServiceResponse
                 {
-                    Success = false,
+                    IsSuccess = false,
                     Message = $"Автор з id {id} не існує"
                 };
             }

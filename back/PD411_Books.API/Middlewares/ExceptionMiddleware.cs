@@ -31,7 +31,7 @@ namespace PD411_Books.API.Middlewares
 
                 ServiceResponse response = new ServiceResponse
                 {
-                    Success = false,
+                    IsSuccess = false,
                     Message = ex.Message
                 }; 
 

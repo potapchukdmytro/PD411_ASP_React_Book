@@ -14,7 +14,7 @@ namespace PD411_Books.BLL.Services
                 {
                     return new ServiceResponse
                     {
-                        Success = false,
+                        IsSuccess = false,
                         Message = $"Файл '{file.FileName}' не є зображенням"
                     };
                 }
@@ -37,7 +37,7 @@ namespace PD411_Books.BLL.Services
             {
                 return new ServiceResponse
                 {
-                    Success = false,
+                    IsSuccess = false,
                     Message = ex.Message
                 };
             }
@@ -56,7 +56,7 @@ namespace PD411_Books.BLL.Services
 
             return new ServiceResponse
             {
-                Success = false,
+                IsSuccess = false,
                 Message = $"Зображення '{imagePath}' не знайдено"
             };
         }

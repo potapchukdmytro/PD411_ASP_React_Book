@@ -10,10 +10,12 @@ namespace PD411_Books.API.Controllers
     public class AuthController : ControllerBase
     {
         private readonly AuthService _authService;
+        private readonly JwtService _jwtService;
 
-        public AuthController(AuthService authService)
+        public AuthController(AuthService authService, JwtService jwtService)
         {
             _authService = authService;
+            _jwtService = jwtService;
         }
 
         [HttpPost("register")]
@@ -27,6 +29,13 @@ namespace PD411_Books.API.Controllers
         public async Task<IActionResult> LoginAsync([FromBody]LoginDto dto)
         {
             var response = await _authService.LoginAsync(dto);
+            return this.GetAction(response);
+        }
+
+        [HttpPost("refresh")]
+        public async Task<IActionResult> RefreshAsync([FromBody] string refreshToken)
+        {
+            var response = await _jwtService.RefreshAsync(refreshToken);
             return this.GetAction(response);
         }
 

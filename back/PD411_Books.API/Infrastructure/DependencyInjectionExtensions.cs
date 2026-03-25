@@ -26,6 +26,7 @@ namespace PD411_Books.API.Infrastructure
             services.AddScoped<AuthorRepository>();
             services.AddScoped<BookRepository>();
             services.AddScoped<GenreRepository>();
+            services.AddScoped<RefreshTokenRepository>();
 
             return services;
         }

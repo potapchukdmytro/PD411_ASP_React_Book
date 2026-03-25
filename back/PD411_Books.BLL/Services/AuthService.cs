@@ -26,7 +26,7 @@ namespace PD411_Books.BLL.Services
             {
                 return new ServiceResponse
                 {
-                    Success = false,
+                    IsSuccess = false,
                     Message = $"Користувач з id '{userId}' не знайдений"
                 };
             }
@@ -40,7 +40,7 @@ namespace PD411_Books.BLL.Services
             {
                 return new ServiceResponse
                 {
-                    Success = false,
+                    IsSuccess = false,
                     Message = result.Errors.First().Description
                 };
             }
@@ -57,7 +57,7 @@ namespace PD411_Books.BLL.Services
             {
                 return new ServiceResponse
                 {
-                    Success = false,
+                    IsSuccess = false,
                     Message = $"Пошта '{dto.Email}' вже використовується"
                 };
             }
@@ -66,7 +66,7 @@ namespace PD411_Books.BLL.Services
             {
                 return new ServiceResponse
                 {
-                    Success = false,
+                    IsSuccess = false,
                     Message = $"Ім'я користувача '{dto.UserName}' зайняте"
                 };
             }
@@ -85,7 +85,7 @@ namespace PD411_Books.BLL.Services
             {
                 return new ServiceResponse
                 {
-                    Success = false,
+                    IsSuccess = false,
                     Message = createResult.Errors.First().Description
                 };
             }
@@ -121,7 +121,7 @@ namespace PD411_Books.BLL.Services
             {
                 return new ServiceResponse
                 {
-                    Success = false,
+                    IsSuccess = false,
                     Message = $"Користувач з поштою '{dto.Email}' не існує"
                 };
             }
@@ -132,17 +132,17 @@ namespace PD411_Books.BLL.Services
             {
                 return new ServiceResponse
                 {
-                    Success = false,
+                    IsSuccess = false,
                     Message = $"Пароль вказано невірно"
                 };
             }
 
-            string jwtToken = await _jwtService.GenerateAccessTokenAsync(entity);
+            var tokens = await _jwtService.GenerateTokensAsync(entity);
 
             return new ServiceResponse
             {
                 Message = "Успішний вхід",
-                Payload = jwtToken
+                Payload = tokens
             };
         }
 

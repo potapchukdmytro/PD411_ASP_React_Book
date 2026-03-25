@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 using PD411_Books.API.Infrastructure;
 using PD411_Books.API.Middlewares;
 using PD411_Books.BLL.Settings;
@@ -77,7 +78,35 @@ builder.Services.AddCors(opt =>
 });
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(optinons =>
+{
+    optinons.SwaggerDoc("v1", new OpenApiInfo { Title = "PD411", Version = "v1" });
+
+    optinons.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        Scheme = "Bearer",
+        BearerFormat = "JWT",
+        In = ParameterLocation.Header,
+        Description = "Потрібно вказати JWT токен"
+    });
+
+    optinons.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            Array.Empty<string>()
+        }
+    });
+});
 
 // Add authentication
 builder.Services.AddJwtAuthentication(builder.Configuration);

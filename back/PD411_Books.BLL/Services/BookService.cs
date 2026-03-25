@@ -27,7 +27,7 @@ namespace PD411_Books.BLL.Services
             {
                 ServiceResponse response = await _imageService.SaveAsync(dto.Image, imagesPath);
 
-                if (!response.Success)
+                if (!response.IsSuccess)
                 {
                     return response;
                 }
@@ -41,14 +41,14 @@ namespace PD411_Books.BLL.Services
             {
                 return new ServiceResponse
                 {
-                    Success = false,
-                    Message = "РќРµ РІРґР°Р»РѕСЃСЏ РґРѕРґР°С‚Рё РєРЅРёРіСѓ"
+                    IsSuccess = false,
+                    Message = "Не вдалося додати книгу"
                 };
             }
 
             return new ServiceResponse
             {
-                Message = $"РљРЅРёРіР° '{entity.Title}' СѓСЃРїС–С€РЅРѕ РґРѕРґР°РЅР°",
+                Message = $"Книга '{entity.Title}' успішно додана",
                 Payload = _mapper.Map<BookDto>(entity)
             };
         }
@@ -61,8 +61,8 @@ namespace PD411_Books.BLL.Services
             {
                 return new ServiceResponse
                 {
-                    Success = false,
-                    Message = $"РљРЅРёРіРё Р· id {dto.Id} РЅРµ С–СЃРЅСѓС”"
+                    IsSuccess = false,
+                    Message = $"Книги з id {dto.Id} не існує"
                 };
             }
 
@@ -76,7 +76,7 @@ namespace PD411_Books.BLL.Services
                     string imagePath = Path.Combine(imagesPath, entity.Image);
                     var deleteResponse = _imageService.Delete(imagePath);
 
-                    if (!deleteResponse.Success)
+                    if (!deleteResponse.IsSuccess)
                     {
                         return deleteResponse;
                     }
@@ -84,7 +84,7 @@ namespace PD411_Books.BLL.Services
 
                 var saveResponse = await _imageService.SaveAsync(dto.Image, imagesPath);
 
-                if (!saveResponse.Success)
+                if (!saveResponse.IsSuccess)
                 {
                     return saveResponse;
                 }
@@ -98,14 +98,14 @@ namespace PD411_Books.BLL.Services
             {
                 return new ServiceResponse
                 {
-                    Success = false,
-                    Message = "РќРµ РІРґР°Р»РѕСЃСЏ РѕРЅРѕРІРёС‚Рё РєРЅРёРіСѓ"
+                    IsSuccess = false,
+                    Message = "Не вдалося оновити книгу"
                 };
             }
 
             return new ServiceResponse
             {
-                Message = $"РљРЅРёРіР° '{oldTitle}' СѓСЃРїС–С€РЅРѕ РѕРЅРѕРІР»РµРЅР°",
+                Message = $"Книга '{oldTitle}' успішно оновлена",
                 Payload = _mapper.Map<BookDto>(entity)
             };
         }
@@ -118,8 +118,8 @@ namespace PD411_Books.BLL.Services
             {
                 return new ServiceResponse
                 {
-                    Success = false,
-                    Message = $"РљРЅРёРіРё Р· id {id} РЅРµ С–СЃРЅСѓС”"
+                    IsSuccess = false,
+                    Message = $"Книги з id {id} не існує"
                 };
             }
 
@@ -128,7 +128,7 @@ namespace PD411_Books.BLL.Services
                 string imagePath = Path.Combine(imagesPath, entity.Image);
                 var response = _imageService.Delete(imagePath);
 
-                if (!response.Success)
+                if (!response.IsSuccess)
                 {
                     return response;
                 }
@@ -140,14 +140,14 @@ namespace PD411_Books.BLL.Services
             {
                 return new ServiceResponse
                 {
-                    Success = false,
-                    Message = "РќРµ РІРґР°Р»РѕСЃСЏ РІРёРґР°Р»РёС‚Рё РєРЅРёРіСѓ"
+                    IsSuccess = false,
+                    Message = "Не вдалося видалити книгу"
                 };
             }
 
             return new ServiceResponse
             {
-                Message = $"РљРЅРёРіР° '{entity.Title}' СѓСЃРїС–С€РЅРѕ РІРёРґР°Р»РµРЅР°",
+                Message = $"Книга '{entity.Title}' успішно видалена",
                 Payload = _mapper.Map<BookDto>(entity)
             };
         }
@@ -160,14 +160,14 @@ namespace PD411_Books.BLL.Services
             {
                 return new ServiceResponse
                 {
-                    Success = false,
-                    Message = $"РљРЅРёРіРё Р· id {id} РЅРµ С–СЃРЅСѓС”"
+                    IsSuccess = false,
+                    Message = $"Книги з id {id} не існує"
                 };
             }
 
             return new ServiceResponse
             {
-                Message = "РљРЅРёРіР° СѓСЃРїС–С€РЅРѕ РѕС‚СЂРёРјР°РЅР°",
+                Message = "Книга успішно отримана",
                 Payload = _mapper.Map<BookDto>(entity)
             };
         }
@@ -183,7 +183,7 @@ namespace PD411_Books.BLL.Services
 
             return new ServiceResponse
             {
-                Message = "РљРЅРёРіРё РѕС‚СЂРёРјР°РЅРѕ",
+                Message = "Книги отримано",
                 Payload = dtos
             };
         }

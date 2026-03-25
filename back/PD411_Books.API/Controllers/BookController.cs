@@ -9,7 +9,7 @@ using PD411_Books.BLL.Services;
 namespace PD411_Books.API.Controllers
 {
     [ApiController]
-    //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
     [Route("api/book")]
     public class BookController : ControllerBase
     {

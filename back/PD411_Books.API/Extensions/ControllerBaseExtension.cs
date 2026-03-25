@@ -7,7 +7,7 @@ namespace PD411_Books.API.Extensions
     {
         public static IActionResult GetAction(this ControllerBase controller, ServiceResponse response)
         {
-            if (response.Success)
+            if (response.IsSuccess)
             {
                 return controller.Ok(response);
             }

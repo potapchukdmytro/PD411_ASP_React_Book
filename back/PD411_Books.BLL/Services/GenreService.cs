@@ -22,11 +22,7 @@ namespace PD411_Books.BLL.Services
         {
             if(await _genreRepository.IsExistAsync(dto.Name))
             {
-                return new ServiceResponse
-                {
-                    Success = false,
-                    Message = $"Жанр '{dto.Name}' вже існує"
-                };
+                return ServiceResponse.Error($"Жанр '{dto.Name}' вже існує");
             }
 
             var entity = _mapper.Map<GenreEntity>(dto);
@@ -35,18 +31,10 @@ namespace PD411_Books.BLL.Services
 
             if (!res)
             {
-                return new ServiceResponse
-                {
-                    Success = false,
-                    Message = "Не вдалося створити жанр"
-                };
+                return ServiceResponse.Error("Не вдалося створити жанр");
             }
 
-            return new ServiceResponse
-            {
-                Message = $"Жанр '{dto.Name}' успішно створено",
-                Payload = _mapper.Map<GenreDto>(entity)
-            };
+            return ServiceResponse.Success($"Жанр '{dto.Name}' успішно створено", _mapper.Map<GenreDto>(entity));
         }
 
         public async Task<ServiceResponse> UpdateAsync(UpdateGenreDto dto)
@@ -57,7 +45,7 @@ namespace PD411_Books.BLL.Services
             {
                 return new ServiceResponse
                 {
-                    Success = false,
+                    IsSuccess = false,
                     Message = $"Жанр '{dto.Name}' не існує"
                 };
             }
@@ -66,7 +54,7 @@ namespace PD411_Books.BLL.Services
             {
                 return new ServiceResponse
                 {
-                    Success = false,
+                    IsSuccess = false,
                     Message = $"Жанр '{dto.Name}' вже існує"
                 };
             }
@@ -80,7 +68,7 @@ namespace PD411_Books.BLL.Services
             {
                 return new ServiceResponse
                 {
-                    Success = false,
+                    IsSuccess = false,
                     Message = "Не вдалося оновити жанр"
                 };
             }
@@ -100,7 +88,7 @@ namespace PD411_Books.BLL.Services
             {
                 return new ServiceResponse
                 {
-                    Success = false,
+                    IsSuccess = false,
                     Message = $"Жанр з id '{id}' не існує"
                 };
             }
@@ -111,7 +99,7 @@ namespace PD411_Books.BLL.Services
             {
                 return new ServiceResponse
                 {
-                    Success = false,
+                    IsSuccess = false,
                     Message = "Не вдалося видалити жанр"
                 };
             }
@@ -131,7 +119,7 @@ namespace PD411_Books.BLL.Services
             {
                 return new ServiceResponse
                 {
-                    Success = false,
+                    IsSuccess = false,
                     Message = $"Жанр '{name}' не існує"
                 };
             }
@@ -142,7 +130,7 @@ namespace PD411_Books.BLL.Services
             {
                 return new ServiceResponse
                 {
-                    Success = false,
+                    IsSuccess = false,
                     Message = "Не вдалося видалити жанр"
                 };
             }
@@ -162,7 +150,7 @@ namespace PD411_Books.BLL.Services
             {
                 return new ServiceResponse
                 {
-                    Success = false,
+                    IsSuccess = false,
                     Message = $"Жанр з id '{id}' не існує"
                 };
             }
@@ -182,7 +170,7 @@ namespace PD411_Books.BLL.Services
             {
                 return new ServiceResponse
                 {
-                    Success = false,
+                    IsSuccess = false,
                     Message = $"Жанр '{name}' не існує"
                 };
             }

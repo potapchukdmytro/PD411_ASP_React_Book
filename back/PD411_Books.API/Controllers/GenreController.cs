@@ -47,7 +47,7 @@ namespace PD411_Books.API.Controllers
         {
             var response = await _genreService.GetByNameAsync(name);
 
-            if (!response.Success)
+            if (!response.IsSuccess)
             {
                 _logger.LogWarning(2000, $"{DateTime.Now} - All genres. Response code -> BAD REQUEST(400)");
             }
