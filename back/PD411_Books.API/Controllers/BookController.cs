@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using PD411_Books.API.Extensions;
 using PD411_Books.API.Settings;
 using PD411_Books.BLL.Dtos.Book;
-using PD411_Books.BLL.Dtos.Pagination;
+using PD411_Books.BLL.Dtos.Query;
 using PD411_Books.BLL.Services;
 
 namespace PD411_Books.API.Controllers
@@ -27,9 +27,9 @@ namespace PD411_Books.API.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAsync([FromQuery] PaginationDto pagination)
+        public async Task<IActionResult> GetAsync([FromQuery] PaginationDto pagination, [FromQuery] SortDto sort)
         {
-            var response = await _bookService.GetAllAsync(pagination);
+            var response = await _bookService.GetAllAsync(pagination, sort);
             return this.GetAction(response);
         }
 

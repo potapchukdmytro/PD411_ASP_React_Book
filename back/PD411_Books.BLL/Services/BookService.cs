@@ -1,7 +1,8 @@
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using PD411_Books.BLL.Dtos.Book;
-using PD411_Books.BLL.Dtos.Pagination;
+using PD411_Books.BLL.Dtos.Query;
+using PD411_Books.BLL.Extensions;
 using PD411_Books.DAL.Entities;
 using PD411_Books.DAL.Repositories;
 
@@ -174,12 +175,12 @@ namespace PD411_Books.BLL.Services
             };
         }
 
-        public async Task<ServiceResponse> GetAllAsync(PaginationDto pagination)
+        public async Task<ServiceResponse> GetAllAsync(PaginationDto pagination, SortDto sort)
         {
             var entities = _bookRepository.Books
                 .Include(b => b.Genres)
                 .Include(b => b.Author)
-                .OrderBy(b => b.Id);
+                .OrderByProperty(sort.SortBy, sort.Desc);
 
             var paginationResponse = await GetPaginationAsync<BookEntity, BookDto>(entities, pagination);
 

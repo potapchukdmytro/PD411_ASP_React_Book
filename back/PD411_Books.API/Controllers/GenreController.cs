@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PD411_Books.API.Extensions;
 using PD411_Books.BLL.Dtos.Genre;
-using PD411_Books.BLL.Dtos.Pagination;
+using PD411_Books.BLL.Dtos.Query;
 using PD411_Books.BLL.Services;
 
 namespace PD411_Books.API.Controllers
@@ -23,7 +23,7 @@ namespace PD411_Books.API.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAsync([FromQuery] PaginationDto pagination)
+        public async Task<IActionResult> GetAsync([FromQuery] PaginationDto pagination, [FromQuery] SortDto sort)
         {
             //throw new NotImplementedException();
             //_logger.LogInformation("Get all genres request");
@@ -32,7 +32,7 @@ namespace PD411_Books.API.Controllers
             //_logger.LogWarning("Warning");
             //_logger.LogTrace("Trace");
 
-            var response = await _genreService.GetAllAsync(pagination);
+            var response = await _genreService.GetAllAsync(pagination, sort);
             return this.GetAction(response);
         }
 

@@ -1,4 +1,4 @@
-﻿namespace PD411_Books.BLL.Dtos.Pagination
+﻿namespace PD411_Books.BLL.Dtos.Query
 {
     public class PaginationResponseDto<T>
     {

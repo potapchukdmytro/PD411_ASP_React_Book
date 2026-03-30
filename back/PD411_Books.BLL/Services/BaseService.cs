@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
-using PD411_Books.BLL.Dtos.Pagination;
+using PD411_Books.BLL.Dtos.Query;
 
 namespace PD411_Books.BLL.Services
 {
