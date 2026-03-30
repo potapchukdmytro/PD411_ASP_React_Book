@@ -1,18 +1,20 @@
 using AutoMapper;
-using PD411_Books.DAL.Entities;
-using PD411_Books.DAL.Repositories;
 using Microsoft.EntityFrameworkCore;
 using PD411_Books.BLL.Dtos.Book;
+using PD411_Books.BLL.Dtos.Pagination;
+using PD411_Books.DAL.Entities;
+using PD411_Books.DAL.Repositories;
 
 namespace PD411_Books.BLL.Services
 {
-    public class BookService
+    public class BookService : BaseService
     {
         private readonly BookRepository _bookRepository;
         private readonly ImageService _imageService;
         private readonly IMapper _mapper;
 
         public BookService(BookRepository bookRepository, ImageService imageService, IMapper mapper)
+            : base(mapper)
         {
             _bookRepository = bookRepository;
             _imageService = imageService;
@@ -172,19 +174,19 @@ namespace PD411_Books.BLL.Services
             };
         }
 
-        public async Task<ServiceResponse> GetAllAsync()
+        public async Task<ServiceResponse> GetAllAsync(PaginationDto pagination)
         {
-            var entities = await _bookRepository.Books
+            var entities = _bookRepository.Books
                 .Include(b => b.Genres)
                 .Include(b => b.Author)
-                .ToListAsync();
+                .OrderBy(b => b.Id);
 
-            var dtos = _mapper.Map<List<BookDto>>(entities);
+            var paginationResponse = await GetPaginationAsync<BookEntity, BookDto>(entities, pagination);
 
             return new ServiceResponse
             {
                 Message = "Книги отримано",
-                Payload = dtos
+                Payload = paginationResponse
             };
         }
     }

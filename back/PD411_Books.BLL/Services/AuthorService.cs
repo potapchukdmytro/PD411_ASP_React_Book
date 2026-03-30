@@ -1,19 +1,20 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using PD411_Books.BLL.Dtos.Author;
-using PD411_Books.BLL.Dtos.Book;
+using PD411_Books.BLL.Dtos.Pagination;
 using PD411_Books.DAL.Entities;
 using PD411_Books.DAL.Repositories;
 
 namespace PD411_Books.BLL.Services
 {
-    public class AuthorService
+    public class AuthorService : BaseService
     {
         private readonly AuthorRepository _authorRepository;
         private readonly ImageService _imageService;
         private readonly IMapper _mapper;
 
         public AuthorService(AuthorRepository authorRepository, ImageService imageService, IMapper mapper)
+            : base(mapper)
         {
             _authorRepository = authorRepository;
             _imageService = imageService;
@@ -28,7 +29,7 @@ namespace PD411_Books.BLL.Services
             {
                 ServiceResponse response = await _imageService.SaveAsync(dto.Image, imagesPath);
 
-                if(!response.IsSuccess)
+                if (!response.IsSuccess)
                 {
                     return response;
                 }
@@ -70,7 +71,7 @@ namespace PD411_Books.BLL.Services
             string oldName = entity.Name;
             entity = _mapper.Map(dto, entity);
 
-            if(dto.Image != null && !string.IsNullOrEmpty(imagesPath))
+            if (dto.Image != null && !string.IsNullOrEmpty(imagesPath))
             {
                 if (!string.IsNullOrEmpty(entity.Image))
                 {
@@ -124,12 +125,12 @@ namespace PD411_Books.BLL.Services
                 };
             }
 
-            if(!string.IsNullOrEmpty(entity.Image))
+            if (!string.IsNullOrEmpty(entity.Image))
             {
                 string imagePath = Path.Combine(imagesPath, entity.Image);
                 var response = _imageService.Delete(imagePath);
 
-                if(!response.IsSuccess)
+                if (!response.IsSuccess)
                 {
                     return response;
                 }
@@ -173,18 +174,18 @@ namespace PD411_Books.BLL.Services
             };
         }
 
-        public async Task<ServiceResponse> GetAllAsync()
+        public async Task<ServiceResponse> GetAllAsync(PaginationDto pagination)
         {
-            var entities = await _authorRepository.Authors
+            var entities = _authorRepository.Authors
                 .Include(a => a.Books)
-                .ToListAsync();
+                .OrderBy(a => a.Id);
 
-            var dtos = _mapper.Map<List<AuthorDto>>(entities);
+            var paginationResponse = await GetPaginationAsync<AuthorEntity, AuthorDto>(entities, pagination);
 
-            return new ServiceResponse 
+            return new ServiceResponse
             {
                 Message = "Автори отримано",
-                Payload = dtos
+                Payload = paginationResponse
             };
         }
     }

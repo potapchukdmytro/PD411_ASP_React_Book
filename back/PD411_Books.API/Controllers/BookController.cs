@@ -4,12 +4,13 @@ using Microsoft.AspNetCore.Mvc;
 using PD411_Books.API.Extensions;
 using PD411_Books.API.Settings;
 using PD411_Books.BLL.Dtos.Book;
+using PD411_Books.BLL.Dtos.Pagination;
 using PD411_Books.BLL.Services;
 
 namespace PD411_Books.API.Controllers
 {
     [ApiController]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
+    //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
     [Route("api/book")]
     public class BookController : ControllerBase
     {
@@ -26,9 +27,9 @@ namespace PD411_Books.API.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAsync()
+        public async Task<IActionResult> GetAsync([FromQuery] PaginationDto pagination)
         {
-            var response = await _bookService.GetAllAsync();
+            var response = await _bookService.GetAllAsync(pagination);
             return this.GetAction(response);
         }
 
