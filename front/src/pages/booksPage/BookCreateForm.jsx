@@ -4,23 +4,24 @@ import FormLabel from "@mui/material/FormLabel";
 import FormControl from "@mui/material/FormControl";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
-import { Select, MenuItem } from "@mui/material";
+import {Select, MenuItem} from "@mui/material";
 import Stack from "@mui/material/Stack";
 import MuiCard from "@mui/material/Card";
-import { styled } from "@mui/material/styles";
-import { useFormik } from "formik";
-import { object, string, number } from "yup";
-import { useNavigate } from "react-router";
-import { useAction } from "../../store/hooks/useAction";
-import { useSelector } from "react-redux";
+import {styled} from "@mui/material/styles";
+import {useFormik} from "formik";
+import {object, string, number} from "yup";
+import {useNavigate} from "react-router";
+import {useAction} from "../../store/hooks/useAction";
+import {useSelector} from "react-redux";
 import {useEffect, useRef, useState} from "react";
-import { toast } from "react-toastify";
+import {toast} from "react-toastify";
 import {useGetAuthorsQuery} from "../../store/services/AuthorApi.js";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import {useCreateBookMutation} from "../../store/services/BookApi.js";
+import UploadImage from "../../components/uploadImage/UploadImage.jsx";
 
-const Card = styled(MuiCard)(({ theme }) => ({
+const Card = styled(MuiCard)(({theme}) => ({
     display: "flex",
     flexDirection: "column",
     alignSelf: "center",
@@ -39,7 +40,7 @@ const Card = styled(MuiCard)(({ theme }) => ({
     }),
 }));
 
-const SignInContainer = styled(Stack)(({ theme }) => ({
+const SignInContainer = styled(Stack)(({theme}) => ({
     minHeight: "calc((1 - var(--template-frame-height, 0)) * 100dvh)",
     padding: theme.spacing(2),
     [theme.breakpoints.up("sm")]: {
@@ -70,22 +71,8 @@ const initValues = {
     authorId: 0,
 };
 
-const VisuallyHiddenInput = styled('input')({
-    clip: 'rect(0 0 0 0)',
-    clipPath: 'inset(50%)',
-    height: 1,
-    overflow: 'hidden',
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    whiteSpace: 'nowrap',
-    width: 1,
-});
-
 const BookCreateForm = () => {
-    const [imageHover, setImageHover] = useState(false);
     const [image, setImage] = useState(null);
-    const imageInput = useRef(null);
     const navigate = useNavigate();
     const {data, isSuccess} = useGetAuthorsQuery();
     const [createBook] = useCreateBookMutation();
@@ -98,35 +85,21 @@ const BookCreateForm = () => {
         formData.append("publishYear", newBook.publishYear);
         formData.append("authorId", newBook.authorId);
         formData.append("rating", newBook.rating);
-        if(image) {
+        if (image) {
             formData.append("image", image);
         }
 
         const res = await createBook(formData);
-        if(res.error) {
+        if (res.error) {
             toast.error(res.error.data.message);
         } else {
             navigate("/books");
         }
     };
 
-    const changeImageHandle = (event) => {
-        if (event.target.files && event.target.files.length > 0) {
-            setImage(event.target.files[0]);
-        }
-    }
-
-    const deleteImageHandle = () => {
-        setImageHover(false);
-        if(imageInput.current) {
-            imageInput.current.value = null;
-        }
-        setImage(null);
-    }
-
     const getError = (prop) => {
         return formik.touched[prop] && formik.errors[prop] ? (
-            <Typography sx={{ mx: 1, color: "red" }} variant="h7">
+            <Typography sx={{mx: 1, color: "red"}} variant="h7">
                 {formik.errors[prop]}
             </Typography>
         ) : null;
@@ -250,49 +223,9 @@ const BookCreateForm = () => {
                             {getError("pages")}
                         </FormControl>
 
-                        <FormControl>
-                            <FormLabel htmlFor="image">Обкладинка</FormLabel>
-                            <Button
-                                component="label"
-                                role={undefined}
-                                variant="contained"
-                                tabIndex={-1}
-                                startIcon={<CloudUploadIcon/>}
-                            >
-                                Обрати файл зображення
-                                <VisuallyHiddenInput
-                                    type="file"
-                                    accept="image/*"
-                                    onChange={changeImageHandle}
-                                    ref={imageInput}
-                                />
-                            </Button>
-                        </FormControl>
-                        {image &&
-                            <Box sx={{textAlign: 'center', width: "100%", position: "relative", cursor: "pointer"}}
-                                 onMouseEnter={() => setImageHover(true)}
-                                 onMouseLeave={() => setImageHover(false)}
-                                 className="hover-pointer">
-                                <Box component="img"
-                                     sx={{objectFit: "contain", opacity: imageHover ? "0.5" : "1"}}
-                                     src={URL.createObjectURL(image)}
-                                     height="300px"
-                                     width="100%">
-                                </Box>
-                                {imageHover &&
-                                    <Box
-                                        onClick={deleteImageHandle}
-                                        sx={{
-                                            position: "absolute",
-                                            top: "50%",
-                                            left: "50%",
-                                            transform: "translate(-50%, -50%)"
-                                        }}>
-                                        <DeleteForeverIcon color="error" sx={{fontSize: "3em"}}/>
-                                    </Box>
-                                }
-                            </Box>
-                        }
+                        <UploadImage onChange={(i) => setImage(i)} label="Обкладинка"
+                                     buttonText="Обрати файл зображення"/>
+
                         <FormControl>
                             <FormLabel htmlFor="authorId">Автор</FormLabel>
                             <Select
