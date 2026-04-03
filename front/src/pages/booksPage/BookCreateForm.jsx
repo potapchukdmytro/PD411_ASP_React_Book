@@ -13,8 +13,12 @@ import { object, string, number } from "yup";
 import { useNavigate } from "react-router";
 import { useAction } from "../../store/hooks/useAction";
 import { useSelector } from "react-redux";
-import { useEffect } from "react";
+import {useEffect, useRef, useState} from "react";
 import { toast } from "react-toastify";
+import {useGetAuthorsQuery} from "../../store/services/AuthorApi.js";
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
+import {useCreateBookMutation} from "../../store/services/BookApi.js";
 
 const Card = styled(MuiCard)(({ theme }) => ({
     display: "flex",
@@ -60,49 +64,65 @@ const SignInContainer = styled(Stack)(({ theme }) => ({
 const initValues = {
     title: "",
     description: "",
-    image: "",
     rating: 0,
-    numberOfPages: 100,
-    publishDate: new Date().getFullYear(),
+    pages: 0,
+    publishYear: new Date().getFullYear(),
     authorId: 0,
 };
 
+const VisuallyHiddenInput = styled('input')({
+    clip: 'rect(0 0 0 0)',
+    clipPath: 'inset(50%)',
+    height: 1,
+    overflow: 'hidden',
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    whiteSpace: 'nowrap',
+    width: 1,
+});
+
 const BookCreateForm = () => {
+    const [imageHover, setImageHover] = useState(false);
+    const [image, setImage] = useState(null);
+    const imageInput = useRef(null);
     const navigate = useNavigate();
-    const { createBook, loadAuthors } = useAction();
-    const { authors, isLoaded } = useSelector((state) => state.author);
+    const {data, isSuccess} = useGetAuthorsQuery();
+    const [createBook] = useCreateBookMutation();
 
-    useEffect(() => {
-        const fetchAuthors = async () => {
-            await loadAuthors();
-        };
-        if (!isLoaded) {
-            fetchAuthors();
+    const handleSubmit = async (newBook) => {
+        const formData = new FormData();
+        formData.append("title", newBook.title);
+        formData.append("description", newBook.description);
+        formData.append("pages", newBook.pages);
+        formData.append("publishYear", newBook.publishYear);
+        formData.append("authorId", newBook.authorId);
+        formData.append("rating", newBook.rating);
+        if(image) {
+            formData.append("image", image);
         }
-    }, []);
 
-    const handleSubmit = async (newBook) => {        
-        // const result = await createBook(newBook);
-        const result = false;
-        if (result) {
-            toast.success(`Книгу '${newBook.title}' успішно додано`);
-            navigate("/books");
+        const res = await createBook(formData);
+        if(res.error) {
+            toast.error(res.error.data.message);
         } else {
-            toast.error('Не вдалося створити книгу', {
-                position: "top-center"
-            });
-
-            toast.warning('Попередежння', {
-                position: "top-center"
-            });
-
-            toast('Інформація', {
-                
-            });
+            navigate("/books");
         }
-
-        // перенаправити користувача на сторінку з книгами
     };
+
+    const changeImageHandle = (event) => {
+        if (event.target.files && event.target.files.length > 0) {
+            setImage(event.target.files[0]);
+        }
+    }
+
+    const deleteImageHandle = () => {
+        setImageHover(false);
+        if(imageInput.current) {
+            imageInput.current.value = null;
+        }
+        setImage(null);
+    }
 
     const getError = (prop) => {
         return formik.touched[prop] && formik.errors[prop] ? (
@@ -118,13 +138,13 @@ const BookCreateForm = () => {
         title: string()
             .required("Обов'язкове поле")
             .max(100, "Максимальна довжина 100 символів"),
-        publishDate: number()
+        publishYear: number()
             .min(1000, `Рік не може бути меншим за 1000`)
             .max(maxYear, `Рік не може бути більшим за ${maxYear}`),
         rating: number()
             .min(0, `Рейтинг не може бути меншим за 0`)
             .max(10, `Рейтинг не може бути більшим за 10`),
-        numberOfPages: number().min(1, `Повинна бути хоча б одна сторінка`),
+        pages: number().min(1, `Повинна бути хоча б одна сторінка`),
     });
 
     // formik
@@ -185,18 +205,18 @@ const BookCreateForm = () => {
                             />
                         </FormControl>
                         <FormControl>
-                            <FormLabel htmlFor="publishDate">Рік</FormLabel>
+                            <FormLabel htmlFor="publishYear">Рік</FormLabel>
                             <TextField
-                                name="publishDate"
+                                name="publishYear"
                                 placeholder="Рік публікацї"
                                 fullWidth
                                 type="number"
                                 variant="outlined"
-                                value={formik.values.publishDate}
+                                value={formik.values.publishYear}
                                 onChange={formik.handleChange}
                                 onBlur={formik.handleBlur}
                             />
-                            {getError("publishDate")}
+                            {getError("publishYear")}
                         </FormControl>
                         <FormControl>
                             <FormLabel htmlFor="rating">Рейтинг</FormLabel>
@@ -214,33 +234,65 @@ const BookCreateForm = () => {
                             {getError("rating")}
                         </FormControl>
                         <FormControl>
-                            <FormLabel htmlFor="numberOfPages">
+                            <FormLabel htmlFor="pages">
                                 К-сть сторінок
                             </FormLabel>
                             <TextField
-                                name="numberOfPages"
+                                name="pages"
                                 placeholder="100"
                                 fullWidth
                                 type="number"
                                 variant="outlined"
-                                value={formik.values.numberOfPages}
+                                value={formik.values.pages}
                                 onChange={formik.handleChange}
                                 onBlur={formik.handleBlur}
                             />
-                            {getError("numberOfPages")}
+                            {getError("pages")}
                         </FormControl>
+
                         <FormControl>
                             <FormLabel htmlFor="image">Обкладинка</FormLabel>
-                            <TextField
-                                name="image"
-                                placeholder="Обкладинка"
-                                fullWidth
-                                variant="outlined"
-                                value={formik.values.image}
-                                onChange={formik.handleChange}
-                                onBlur={formik.handleBlur}
-                            />
+                            <Button
+                                component="label"
+                                role={undefined}
+                                variant="contained"
+                                tabIndex={-1}
+                                startIcon={<CloudUploadIcon/>}
+                            >
+                                Обрати файл зображення
+                                <VisuallyHiddenInput
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={changeImageHandle}
+                                    ref={imageInput}
+                                />
+                            </Button>
                         </FormControl>
+                        {image &&
+                            <Box sx={{textAlign: 'center', width: "100%", position: "relative", cursor: "pointer"}}
+                                 onMouseEnter={() => setImageHover(true)}
+                                 onMouseLeave={() => setImageHover(false)}
+                                 className="hover-pointer">
+                                <Box component="img"
+                                     sx={{objectFit: "contain", opacity: imageHover ? "0.5" : "1"}}
+                                     src={URL.createObjectURL(image)}
+                                     height="300px"
+                                     width="100%">
+                                </Box>
+                                {imageHover &&
+                                    <Box
+                                        onClick={deleteImageHandle}
+                                        sx={{
+                                            position: "absolute",
+                                            top: "50%",
+                                            left: "50%",
+                                            transform: "translate(-50%, -50%)"
+                                        }}>
+                                        <DeleteForeverIcon color="error" sx={{fontSize: "3em"}}/>
+                                    </Box>
+                                }
+                            </Box>
+                        }
                         <FormControl>
                             <FormLabel htmlFor="authorId">Автор</FormLabel>
                             <Select
@@ -249,7 +301,8 @@ const BookCreateForm = () => {
                                 onChange={formik.handleChange}
                             >
                                 <MenuItem value={0}>Невідомий</MenuItem>
-                                {authors.map((author) => (
+
+                                {isSuccess && data.payload.data.map((author) => (
                                     <MenuItem key={author.id} value={author.id}>
                                         {author.name}
                                     </MenuItem>
