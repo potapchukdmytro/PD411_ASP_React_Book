@@ -67,7 +67,7 @@ const BookCard = ({ book }) => {
             </CardContent>
             <CardContent sx={{textAlign: "center"}}>
                 <Typography variant="body2" sx={{ color: "text.secondary" }}>
-                    <Rating readOnly max={10} value={book.rating * 2}/>
+                    <Rating readOnly max={10} value={book.rating}/>
                 </Typography>
             </CardContent>
             <CardActions disableSpacing>

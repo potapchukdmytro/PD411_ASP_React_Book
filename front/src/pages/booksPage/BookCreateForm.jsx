@@ -4,19 +4,24 @@ import FormLabel from "@mui/material/FormLabel";
 import FormControl from "@mui/material/FormControl";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
-import { Select, MenuItem } from "@mui/material";
+import {Select, MenuItem} from "@mui/material";
 import Stack from "@mui/material/Stack";
 import MuiCard from "@mui/material/Card";
-import { styled } from "@mui/material/styles";
-import { useFormik } from "formik";
-import { object, string, number } from "yup";
-import { useNavigate } from "react-router";
-import { useAction } from "../../store/hooks/useAction";
-import { useSelector } from "react-redux";
-import { useEffect } from "react";
-import { toast } from "react-toastify";
+import {styled} from "@mui/material/styles";
+import {useFormik} from "formik";
+import {object, string, number} from "yup";
+import {useNavigate} from "react-router";
+import {useAction} from "../../store/hooks/useAction";
+import {useSelector} from "react-redux";
+import {useEffect, useRef, useState} from "react";
+import {toast} from "react-toastify";
+import {useGetAuthorsQuery} from "../../store/services/AuthorApi.js";
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
+import {useCreateBookMutation} from "../../store/services/BookApi.js";
+import UploadImage from "../../components/uploadImage/UploadImage.jsx";
 
-const Card = styled(MuiCard)(({ theme }) => ({
+const Card = styled(MuiCard)(({theme}) => ({
     display: "flex",
     flexDirection: "column",
     alignSelf: "center",
@@ -35,7 +40,7 @@ const Card = styled(MuiCard)(({ theme }) => ({
     }),
 }));
 
-const SignInContainer = styled(Stack)(({ theme }) => ({
+const SignInContainer = styled(Stack)(({theme}) => ({
     minHeight: "calc((1 - var(--template-frame-height, 0)) * 100dvh)",
     padding: theme.spacing(2),
     [theme.breakpoints.up("sm")]: {
@@ -60,53 +65,41 @@ const SignInContainer = styled(Stack)(({ theme }) => ({
 const initValues = {
     title: "",
     description: "",
-    image: "",
     rating: 0,
-    numberOfPages: 100,
-    publishDate: new Date().getFullYear(),
+    pages: 0,
+    publishYear: new Date().getFullYear(),
     authorId: 0,
 };
 
 const BookCreateForm = () => {
+    const [image, setImage] = useState(null);
     const navigate = useNavigate();
-    const { createBook, loadAuthors } = useAction();
-    const { authors, isLoaded } = useSelector((state) => state.author);
+    const {data, isSuccess} = useGetAuthorsQuery();
+    const [createBook] = useCreateBookMutation();
 
-    useEffect(() => {
-        const fetchAuthors = async () => {
-            await loadAuthors();
-        };
-        if (!isLoaded) {
-            fetchAuthors();
+    const handleSubmit = async (newBook) => {
+        const formData = new FormData();
+        formData.append("title", newBook.title);
+        formData.append("description", newBook.description);
+        formData.append("pages", newBook.pages);
+        formData.append("publishYear", newBook.publishYear);
+        formData.append("authorId", newBook.authorId);
+        formData.append("rating", newBook.rating);
+        if (image) {
+            formData.append("image", image);
         }
-    }, []);
 
-    const handleSubmit = async (newBook) => {        
-        // const result = await createBook(newBook);
-        const result = false;
-        if (result) {
-            toast.success(`Книгу '${newBook.title}' успішно додано`);
-            navigate("/books");
+        const res = await createBook(formData);
+        if (res.error) {
+            toast.error(res.error.data.message);
         } else {
-            toast.error('Не вдалося створити книгу', {
-                position: "top-center"
-            });
-
-            toast.warning('Попередежння', {
-                position: "top-center"
-            });
-
-            toast('Інформація', {
-                
-            });
+            navigate("/books");
         }
-
-        // перенаправити користувача на сторінку з книгами
     };
 
     const getError = (prop) => {
         return formik.touched[prop] && formik.errors[prop] ? (
-            <Typography sx={{ mx: 1, color: "red" }} variant="h7">
+            <Typography sx={{mx: 1, color: "red"}} variant="h7">
                 {formik.errors[prop]}
             </Typography>
         ) : null;
@@ -118,13 +111,13 @@ const BookCreateForm = () => {
         title: string()
             .required("Обов'язкове поле")
             .max(100, "Максимальна довжина 100 символів"),
-        publishDate: number()
+        publishYear: number()
             .min(1000, `Рік не може бути меншим за 1000`)
             .max(maxYear, `Рік не може бути більшим за ${maxYear}`),
         rating: number()
             .min(0, `Рейтинг не може бути меншим за 0`)
             .max(10, `Рейтинг не може бути більшим за 10`),
-        numberOfPages: number().min(1, `Повинна бути хоча б одна сторінка`),
+        pages: number().min(1, `Повинна бути хоча б одна сторінка`),
     });
 
     // formik
@@ -185,18 +178,18 @@ const BookCreateForm = () => {
                             />
                         </FormControl>
                         <FormControl>
-                            <FormLabel htmlFor="publishDate">Рік</FormLabel>
+                            <FormLabel htmlFor="publishYear">Рік</FormLabel>
                             <TextField
-                                name="publishDate"
+                                name="publishYear"
                                 placeholder="Рік публікацї"
                                 fullWidth
                                 type="number"
                                 variant="outlined"
-                                value={formik.values.publishDate}
+                                value={formik.values.publishYear}
                                 onChange={formik.handleChange}
                                 onBlur={formik.handleBlur}
                             />
-                            {getError("publishDate")}
+                            {getError("publishYear")}
                         </FormControl>
                         <FormControl>
                             <FormLabel htmlFor="rating">Рейтинг</FormLabel>
@@ -214,33 +207,25 @@ const BookCreateForm = () => {
                             {getError("rating")}
                         </FormControl>
                         <FormControl>
-                            <FormLabel htmlFor="numberOfPages">
+                            <FormLabel htmlFor="pages">
                                 К-сть сторінок
                             </FormLabel>
                             <TextField
-                                name="numberOfPages"
+                                name="pages"
                                 placeholder="100"
                                 fullWidth
                                 type="number"
                                 variant="outlined"
-                                value={formik.values.numberOfPages}
+                                value={formik.values.pages}
                                 onChange={formik.handleChange}
                                 onBlur={formik.handleBlur}
                             />
-                            {getError("numberOfPages")}
+                            {getError("pages")}
                         </FormControl>
-                        <FormControl>
-                            <FormLabel htmlFor="image">Обкладинка</FormLabel>
-                            <TextField
-                                name="image"
-                                placeholder="Обкладинка"
-                                fullWidth
-                                variant="outlined"
-                                value={formik.values.image}
-                                onChange={formik.handleChange}
-                                onBlur={formik.handleBlur}
-                            />
-                        </FormControl>
+
+                        <UploadImage onChange={(i) => setImage(i)} label="Обкладинка"
+                                     buttonText="Обрати файл зображення"/>
+
                         <FormControl>
                             <FormLabel htmlFor="authorId">Автор</FormLabel>
                             <Select
@@ -249,7 +234,8 @@ const BookCreateForm = () => {
                                 onChange={formik.handleChange}
                             >
                                 <MenuItem value={0}>Невідомий</MenuItem>
-                                {authors.map((author) => (
+
+                                {isSuccess && data.payload.data.map((author) => (
                                     <MenuItem key={author.id} value={author.id}>
                                         {author.name}
                                     </MenuItem>

@@ -15,6 +15,7 @@ import {useCreateAuthorMutation} from "../../store/services/AuthorApi.js";
 import {useNavigate} from "react-router";
 import {toast} from "react-toastify";
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import UploadImage from "../../components/uploadImage/UploadImage.jsx";
 
 const Card = styled(MuiCard)(({theme}) => ({
     display: "flex",
@@ -57,18 +58,6 @@ const SignInContainer = styled(Stack)(({theme}) => ({
     },
 }));
 
-const VisuallyHiddenInput = styled('input')({
-    clip: 'rect(0 0 0 0)',
-    clipPath: 'inset(50%)',
-    height: 1,
-    overflow: 'hidden',
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    whiteSpace: 'nowrap',
-    width: 1,
-});
-
 const initValues = {
     name: "",
     birthDate: new Date().toISOString().slice(0, 16),
@@ -76,9 +65,7 @@ const initValues = {
 };
 
 const AuthorsCreateForm = () => {
-    const [imageHover, setImageHover] = useState(false);
     const [image, setImage] = useState(null);
-    const imageInput = useRef(null);
     const [createAuthor, {isError, error}] = useCreateAuthorMutation();
     const navigate = useNavigate();
 
@@ -98,20 +85,6 @@ const AuthorsCreateForm = () => {
             toast.error(error);
         }
     };
-
-    const changeImageHandle = (event) => {
-        if (event.target.files && event.target.files.length > 0) {
-            setImage(event.target.files[0]);
-        }
-    }
-
-    const deleteImageHandle = () => {
-        setImageHover(false);
-        if(imageInput.current) {
-            imageInput.current.value = null;
-        }
-        setImage(null);
-    }
 
     const getError = (prop) => {
         return formik.touched[prop] && formik.errors[prop] ? (
@@ -206,49 +179,9 @@ const AuthorsCreateForm = () => {
                         </FormControl>
                         {getError("country")}
 
-                        <FormControl>
-                            <FormLabel htmlFor="image">Фото автора</FormLabel>
-                            <Button
-                                component="label"
-                                role={undefined}
-                                variant="contained"
-                                tabIndex={-1}
-                                startIcon={<CloudUploadIcon/>}
-                            >
-                                Upload files
-                                <VisuallyHiddenInput
-                                    type="file"
-                                    accept="image/*"
-                                    onChange={changeImageHandle}
-                                    ref={imageInput}
-                                />
-                            </Button>
-                        </FormControl>
-                        {image &&
-                            <Box sx={{textAlign: 'center', width: "100%", position: "relative", cursor: "pointer"}}
-                                 onMouseEnter={() => setImageHover(true)}
-                                 onMouseLeave={() => setImageHover(false)}
-                                 className="hover-pointer">
-                                <Box component="img"
-                                     sx={{objectFit: "contain", opacity: imageHover ? "0.5" : "1"}}
-                                     src={URL.createObjectURL(image)}
-                                     height="300px"
-                                     width="100%">
-                                </Box>
-                                {imageHover &&
-                                    <Box
-                                        onClick={deleteImageHandle}
-                                         sx={{
-                                             position: "absolute",
-                                             top: "50%",
-                                             left: "50%",
-                                             transform: "translate(-50%, -50%)"
-                                         }}>
-                                        <DeleteForeverIcon color="error" sx={{fontSize: "3em"}}/>
-                                    </Box>
-                                }
-                            </Box>
-                        }
+                        <UploadImage label="Фото автора" onChange={(i) => setImage(i)}
+                                     buttonText="Обрати файл зображення"/>
+
                         <Button
                             type="submit"
                             fullWidth

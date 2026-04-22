@@ -25,7 +25,7 @@ const AuthorsListPage = () => {
         >
             {isSuccess &&
                 <Grid container spacing={2} mx="100px" my="50px">
-                    {data.payload.map((a) => (
+                    {data.payload.data.map((a) => (
                         <Grid size={4} key={a.id}>
                             <AuthorsCard author={a}/>
                         </Grid>
