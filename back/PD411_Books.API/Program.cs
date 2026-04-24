@@ -53,7 +53,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     string? localDb = builder.Configuration.GetConnectionString("LocalDb");
     string? aivenDb = builder.Configuration.GetConnectionString("AivenDb");
     string? dockerDb = builder.Configuration.GetConnectionString("DockerDb");
-    options.UseNpgsql(dockerDb);
+    options.UseNpgsql(localDb);
 });
 
 // Add identity
