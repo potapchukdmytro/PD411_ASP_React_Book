@@ -1,0 +1,44 @@
+services:
+  db:
+    image: postgres
+    container_name: "db"
+    ports:
+      - "5400:5432"
+    environment:
+      - "POSTGRES_PASSWORD=qwerty"
+      - "POSTGRES_DB=pd411_shop"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - "shop_db:/var/lib/postgresql"
+    networks:
+      - "shop_nt"
+
+  api:
+    image: pd411_shop_api
+    container_name: "shop_api"
+    ports:
+      - "5000:8080"
+    environment:
+      - "ConnectionStrings__LocalDb=User ID=postgres;Password=qwerty;Host=db;Port=5432;Database=pd411_shop;"
+      - "EnableSwagger=true"
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - "shop_api:/app/Storage"
+    networks:
+      - "shop_nt"
+
+networks:
+  shop_nt:
+    name: "shop_nt"
+
+volumes:
+  shop_db:
+    name: "shop_db"
+  shop_api:
+    name: "shop_api"
