@@ -18,6 +18,7 @@ services:
       - "shop_nt"
 
   api:
+    build: "back/"
     image: pd411_shop_api
     container_name: "shop_api"
     ports:
