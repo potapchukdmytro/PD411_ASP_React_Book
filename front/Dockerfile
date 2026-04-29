@@ -22,6 +22,12 @@ RUN --mount=type=cache,target=/root/.npm npm ci
 # Copy the rest of the application source code into the container
 COPY . .
  
+ARG API_URL
+ARG IMAGE_URL
+
+ENV VITE_API_URL=$API_URL
+ENV VITE_IMAGE_URL=$IMAGE_URL
+
 # Build the React.js application (outputs to /app/dist)
 RUN npm run build
  
