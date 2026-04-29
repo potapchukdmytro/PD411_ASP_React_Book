@@ -2,7 +2,7 @@ ARG NODE_VERSION=22.22-alpine
 FROM node:${NODE_VERSION} AS build
 WORKDIR /app
 COPY package*.json ./
-RUN npm ci
+RUN --mount=type=cache,target=/root/.npm npm ci
 COPY . .
 
 ARG API_URL
