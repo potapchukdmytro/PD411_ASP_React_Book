@@ -1,4 +1,5 @@
-FROM node:22.22-alpine AS build
+ARG NODE_VERSION=22.22-alpine
+FROM node:${NODE_VERSION} AS build
 WORKDIR /app
 COPY package*.json ./
 RUN npm ci
@@ -12,7 +13,10 @@ ENV VITE_IMAGE_URL=$IMAGE_URL
 
 RUN npm run build
 
-FROM nginx:alpine
-COPY --from=build /app/dist /usr/share/nginx/html
-EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]
+FROM node:${NODE_VERSION} AS runner
+WORKDIR /app
+COPY --link --from=builder /app/dist ./dist
+RUN --mount=type=cache,target=/root/.npm npm install serve@^14.2.6 --omit=dev
+USER node
+EXPOSE 3000
+CMD ["npx", "serve", "-s", "dist", "-l", "3000"]
