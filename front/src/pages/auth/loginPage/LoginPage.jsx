@@ -96,7 +96,6 @@ const LoginPage = () => {
         }
 
         const response = await login(cred);
-        console.log(response);
         if(response.isSuccess) {
             navigate("/", {replace: true});
         }
