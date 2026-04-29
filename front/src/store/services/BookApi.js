@@ -1,8 +1,9 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
+import { env } from '../../env'
 
 export const bookApi = createApi({
     reducerPath: 'book',
-    baseQuery: fetchBaseQuery({baseUrl: import.meta.env.VITE_API_URL}),
+    baseQuery: fetchBaseQuery({baseUrl: env.apiBaseUrl}),
     tagTypes: ['books'],
     endpoints: (build) => ({
         getBooks: build.query({
