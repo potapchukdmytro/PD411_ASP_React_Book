@@ -33,6 +33,16 @@ services:
       - "shop_api:/app/Storage"
     networks:
       - "shop_nt"
+  web:
+    build:
+      context: "front/"
+      args:
+        API_URL: "http://localhost:5000/api/"
+        IMAGE_URL: "http://localhost:5000/image/"
+    image: pd411_shop_web
+    container_name: "shop_web"
+    ports:
+      - "80:3000"
 
 networks:
   shop_nt:
