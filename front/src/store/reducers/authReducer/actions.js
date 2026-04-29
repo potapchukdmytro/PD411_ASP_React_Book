@@ -1,18 +1,17 @@
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import { deleteCookie, setCookie } from "../../../services/CookieService";
+import { env } from "../../../env";
 
 export const login = (cred) => async (dispatch) => {
     try {
-        const url = import.meta.env.VITE_API_URL + "auth/login";
+        const url = env.apiBaseUrl + "auth/login";
         const response = await axios.post(url, cred);
         const { data } = response;
-        await loginByToken(data.payload, cred.rememberMe)(dispatch);
+        await loginByToken(data.payload.accessToken, cred.rememberMe)(dispatch);
         return data;
     } catch (error) {
-        const { response } = error;
-        const { data } = response;
-        return data;
+        console.log(error)
     }
 };
 
