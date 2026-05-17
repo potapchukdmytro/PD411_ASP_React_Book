@@ -1,9 +1,20 @@
 services:
+  caddy:
+    image: caddy
+    container_name: "caddy"
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - "caddy_data:/data"
+      - "caddy_config:/config"
+      - "./Caddyfile:/etc/caddy/Caddyfile"
+    networks:
+      - "shop_nt"
   db:
     image: postgres
     container_name: "db"
-    ports:
-      - "5400:5432"
     environment:
       - "POSTGRES_PASSWORD=qwerty"
       - "POSTGRES_DB=pd411_shop"
@@ -21,8 +32,6 @@ services:
     build: "back/"
     image: potapchuk22/pd411_shop_api
     container_name: "shop_api"
-    ports:
-      - "5000:8080"
     environment:
       - "ConnectionStrings__LocalDb=User ID=postgres;Password=qwerty;Host=db;Port=5432;Database=pd411_shop;"
       - "EnableSwagger=true"
@@ -37,12 +46,12 @@ services:
     build:
       context: "front/"
       args:
-        API_URL: "http://localhost:5000/api/"
-        IMAGE_URL: "http://localhost:5000/image/"
+        API_URL: "https//api.pd411.pp.ua/api/"
+        IMAGE_URL: "https://api.pd411.pp.ua/image/"
     image: potapchuk22/pd411_shop_web
     container_name: "shop_web"
-    ports:
-      - "80:3000"
+    networks:
+      - "shop_nt"
 
 networks:
   shop_nt:
@@ -53,3 +62,7 @@ volumes:
     name: "shop_db"
   shop_api:
     name: "shop_api"
+  caddy_data:
+    name: "caddy_data"
+  caddy_config:
+    name: "caddy_config"
