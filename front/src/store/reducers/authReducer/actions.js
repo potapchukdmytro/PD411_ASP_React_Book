@@ -6,9 +6,9 @@ import { env } from "../../../env";
 export const login = (cred) => async (dispatch) => {
     try {
         const url = env.apiBaseUrl + "auth/login";
+        console.log(url);
         const response = await axios.post(url, cred);
         const { data } = response;
-        console.log(data);
         await loginByToken(data.payload.accessToken, cred.rememberMe)(dispatch);
         return data;
     } catch (error) {
