@@ -46,7 +46,7 @@ services:
     build:
       context: "front/"
       args:
-        API_URL: "https//api.pd411.pp.ua/api/"
+        API_URL: "https://api.pd411.pp.ua/api/"
         IMAGE_URL: "https://api.pd411.pp.ua/image/"
     image: potapchuk22/pd411_shop_web
     container_name: "shop_web"
