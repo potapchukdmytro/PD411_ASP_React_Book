@@ -237,15 +237,14 @@ const LoginPage = () => {
                             gap: 2,
                         }}
                     >
-                        {/* <Button
+                        <Button
                             fullWidth
                             variant="outlined"
-                            onClick={() => googleLogin()}
+                            onClick={() => alert("Sign in with Google")}
                             startIcon={<GoogleIcon />}
                         >
                             Sign in with Google
-                        </Button> */}
-                        <GoogleLogin onSuccess={succesAuth} onError={errorAuth}/>
+                        </Button>
                         <Button
                             fullWidth
                             variant="outlined"
